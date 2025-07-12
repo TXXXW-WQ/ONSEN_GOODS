@@ -34,7 +34,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
           //画像URLはダミーのプレースホルダーサービスを使用
           db.run(`INSERT OR IGNORE INTO hot_springs (id, name, location, rating, description, image_url, facilities) VALUES
             (1, 'せせらぎの湯 花水木', '鹿児島県日置市伊集院町大田2768', 4.5, 'だいぶ山奥にあって行きづらいが、露天風呂が最高。', 'https://via.placeholder.com/300x200/FF5733/FFFFFF?text=Kusatsu', '露天風呂,サウナ,水ぶろ,外気浴' ),
-            (2, '硫黄谷温泉 霧島ホテル' '鹿児島県霧島市牧園町高千穂3948', 4.9, '鹿児島で最大の温泉、規格外。' 'https://via.placeholder.com/300x200/33FF57/FFFFFF?text=Hakone', '露天風呂,サウナ,水風呂,外気浴'),
+            (2, '硫黄谷温泉 霧島ホテル', '鹿児島県霧島市牧園町高千穂3948', 4.9, '鹿児島で最大の温泉、規格外。', 'https://via.placeholder.com/300x200/33FF57/FFFFFF?text=Hakone', '露天風呂,サウナ,水風呂,外気浴'),
             (3, '芦刈温泉', '鹿児島県鹿児島市若葉町45-1', 4.7,'鹿児島市内から気軽に行ける温泉、入っていて楽しい。', 'https://via.placeholder.com/300x200/3357FF/FFFFFF?text=Noboribetsu', '露天風呂,サウナ,水風呂')
           `);
         }
