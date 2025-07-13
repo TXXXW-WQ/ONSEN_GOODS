@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors'); //CORSミドルウェアを読み込む
-const onsenRoutes = require('./routes/onsen'); //APIロートファイルを読み込む
+const onsenRoutes = require('./routes/onsen'); //APIルートファイルを読み込む
 const path = require('path') //Node.jsのパスユーティリティを読み込む(念のため)
 
 const app = express();

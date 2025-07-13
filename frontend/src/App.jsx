@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import './App.css'
-import { Link, Route, Router } from 'react-router-dom'
+import { Link, Route, Router, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import OnsenDetail from './pages/OnsenDetail'
-import review from './pages/review'
-
+import Review from './pages/Review'
+import { ROUTES } from './const'
+ROUTES
 // ページが見つからないとき
 function NotFoundPage() {
   return (
@@ -20,9 +21,21 @@ function App() {
  
 
   return (
-  <div>
+    <div>
+      <nav>
+        <ul>
+          <li><Link to={ROUTES.HOME}>温泉一覧</Link></li>
+        </ul>
+      </nav>
 
-  </div>
+      {/* ルートを定義 */}
+      <Routes>
+        <Route path={ROUTES.HOME} element={<Home />} />
+        <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail />} />
+        <Route path={ROUTES.REVIEW} element={<Review />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </div>
   );
 }
 
