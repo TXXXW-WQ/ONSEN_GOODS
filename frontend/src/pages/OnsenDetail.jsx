@@ -47,15 +47,43 @@ function OnsenDetail() {
   }
 
   return (
-    <div>
-      <h1>{onsen.name}</h1>
-      <img src={onsen.image_url} alt={onsen.name} />
-      <p>{onsen.rating}</p>
-      <p>{onsen.description}</p>
-      <p>{onsen.facilities}</p>
-      <p>{onsen.updated_at}</p>
-      <Link to={ROUTES.REVIEW.replace(':id',id)} >この温泉を評価する</Link><br />
-      <Link to="/">←温泉一覧に戻る</Link>
+    <div className="p-6 max-w-3xl mx-auto bg-white shadow-xl rounded-xl mt-8 mb-8">
+      <h1 className="text-4xl font-extrabold text-blue-700 mb-6 text-center">{onsen.name}</h1>
+      
+      {onsen.image_url && (
+        <div className="mb-6 text-center">
+          <img 
+            src={onsen.image_url} 
+            alt={onsen.name} 
+            className="w-full h-64 object-cover rounded-lg shadow-md border border-gray-200 mx-auto" 
+            style={{ maxWidth: '600px' }} // 画像の最大幅を調整
+          />
+        </div>
+      )}
+      
+      <div className="space-y-4 text-gray-800 text-lg">
+        <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
+        <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 'N/A'} / 5</p>
+        <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
+        <p><strong className="font-semibold text-gray-700">設備:</strong> {onsen.facilities}</p>
+        <p className="text-sm text-gray-500 mt-4">最終更新日: {new Date(onsen.updated_at).toLocaleDateString()}</p>
+      </div>
+
+      <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+        
+        <Link 
+          to={ROUTES.HOME} 
+          className="inline-block px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
+        >
+          ← 温泉一覧に戻る
+        </Link>
+        <Link 
+          to={ROUTES.REVIEW.replace(':id', id)} 
+          className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
+        >
+          📝 この温泉を評価する →
+        </Link>
+      </div>
     </div>
   )
 }

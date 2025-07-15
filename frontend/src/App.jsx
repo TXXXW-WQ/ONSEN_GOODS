@@ -21,10 +21,10 @@ function App() {
  
 
   return (
-    <div>
-      <nav>
-        <ul>
-          <li><Link to={ROUTES.HOME}>温泉一覧</Link></li>
+    <div className='p-6 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-8'>
+      <nav className='bg-blue-800 p-4 shadow-lg'>
+        <ul className='justify-center items-center list-none p-0 m-0'>
+          <li ><Link to={ROUTES.HOME} className='text-white text-4x1 font-extrabold tracking-wide hover:text-blue-200 transition-colors duration-300'>ONSEN GOODS</Link></li>
         </ul>
       </nav>
 
