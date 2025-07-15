@@ -10,6 +10,9 @@ router.get('/', onsenController.getAllOnsen);
 // GET /api/onsen/:id
 router.get('/:id', onsenController.getOnsenById);
 
+// 特定の温泉に対する評価とコメントを取得するエンドポイント
+router.get('/:id/rating', onsenController.getRatingByOnsenId);
+
 // 特定の温泉に対する評価を投稿するAPIエンドポイント
 // POST /api/onsen/:id/rating
 router.post('/:id/rating', onsenController.postRating);

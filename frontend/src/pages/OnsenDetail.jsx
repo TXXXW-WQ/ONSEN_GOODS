@@ -8,6 +8,10 @@ function OnsenDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // 評価一覧のstate
+  const [ratings, setRatings] = useState([]);
+  const [ratingsLoading, setRatingsLoading] = useState(true);
+
   useEffect(() => {
     const fetchOnsenDetail = async () => {
       try {
@@ -28,6 +32,28 @@ function OnsenDetail() {
     };
     fetchOnsenDetail();
   },[id]);
+
+  // 評価一覧の取得
+  useEffect(() => {
+    const fetchRatings = async () => {
+      setRatingsLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3000/api/onsen/${id}/rating`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+        }
+        const data = await response.json();
+        setRatings(data);
+      } catch (e) {
+        setRatingsError(e);
+        console.error(`温泉ID ${id} の評価取得中にエラーが発生しました:`, e);
+      } finally {
+        setRatingsLoading(false);
+      }
+    };
+    fetchRatings();
+  }, [id]);
 
   if (loading) {
     return <div>読み込み中...</div>
@@ -63,10 +89,32 @@ function OnsenDetail() {
       
       <div className="space-y-4 text-gray-800 text-lg">
         <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
-        <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 'N/A'} / 5</p>
+        <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 'N/A'} / 5.0</p>
         <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
         <p><strong className="font-semibold text-gray-700">設備:</strong> {onsen.facilities}</p>
         <p className="text-sm text-gray-500 mt-4">最終更新日: {new Date(onsen.updated_at).toLocaleDateString()}</p>
+      </div>
+
+      {/* 評価一覧 */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold mb-4 text-blue-800">ユーザーの評価・コメント</h2>
+        {ratingsLoading ? (
+          <div>評価を読み込み中...</div>
+        ) : ratings.length === 0 ? (
+          <div className="text-gray-500">まだ評価がありません。</div>
+        ) : (
+          <ul className="space-y-4">
+            {ratings.map((r, i) => (
+              <li key={r.id || i} className="border rounded-lg p-4 shadow-sm bg-gray-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-semibold text-yellow-600">★ {Number(r.rating_value).toFixed(1)} / 5.0</span>
+                  <span className="text-xs text-gray-400 ml-2">{r.username || '匿名'}・{new Date(r.created_at).toLocaleDateString()}</span>
+                </div>
+                <div className="text-gray-800">{r.comment}</div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">

@@ -36,6 +36,27 @@ exports.getOnsenById = (req, res) => {
   });
 };
 
+// 2-1 特定の温泉に対する評価とコメントを取得するAPI
+exports.getRatingByOnsenId = (req, res) => {
+  const { id } = req.params; // URLパスから温泉IDを取得
+  const sql = 'SELECT * FROM ratings WHERE onsen_id = ?';
+  db.all(sql, [id], (err, rows) => {
+    if (err) {
+      // サーバーエラー (500 Internal Server Error)
+      console.error('温泉評価取得エラー:', err.message); // デバッグ用
+      res.status(500).json({ error: '温泉評価の取得中にエラーが発生しました。'});
+      return;
+    }
+    if (rows.length === 0) {
+      // 評価が見つからない場合、404 Not Found
+      res.status(404).json({ message: '指定された温泉の評価が見つかりませんでした。'});
+      return;
+    }
+    // 成功した場合、200 OKとともに取得した評価のリストをJSONで返す
+    res.status(200).json(rows); 
+  });
+}
+
 //3. 特定の温泉に対する評価を投稿するAPI(POST /api/onsen/:id/rating)
 // ユーザーから評価とコメントを受け取り、ratingsテーブルの保存、hot_springsテーブルの平均評価を更新。
 exports.postRating = (req, res) =>{
