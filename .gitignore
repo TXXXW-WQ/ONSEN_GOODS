@@ -40,3 +40,6 @@ Thumbs.db
 
 # Database files
 *.db
+
+# 環境変数
+.env
