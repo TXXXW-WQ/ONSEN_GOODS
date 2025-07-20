@@ -1,15 +1,29 @@
-const pool = require('./database'); // database.jsからプールをインポート
+import pool from './database.js' // database.jsからプールをインポート
+
+
 
 async function setup() {
   try {
+    // 既存テーブルを削除（依存関係のあるratings→hot_springsの順）
+    await pool.query('DROP TABLE IF EXISTS ratings;');
+    await pool.query('DROP TABLE IF EXISTS hot_springs;');
+
     // hot_springsテーブルの作成
     await pool.query(`
       CREATE TABLE IF NOT EXISTS hot_springs (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL UNIQUE,
         location VARCHAR(255) NOT NULL,
         description TEXT,
         image_url VARCHAR(255),
+        rating REAL CHECK (rating >= 0.0 AND rating <= 5.0) DEFAULT 0.0,
+        cold_bath BOOLEAN DEFAULT FALSE,
+        sauna BOOLEAN DEFAULT FALSE,
+        rotenburo BOOLEAN DEFAULT FALSE,
+        bubble_bath BOOLEAN DEFAULT FALSE,
+        jet_bath BOOLEAN DEFAULT FALSE,
+
+        facilities TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -20,18 +34,18 @@ async function setup() {
         id SERIAL PRIMARY KEY,
         hot_spring_id INTEGER NOT NULL REFERENCES hot_springs(id),
         user_id INTEGER NOT NULL,
-        rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+        rating REAL CHECK (rating >= 1.0 AND rating <= 5.0),
         comment TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
     // 初期データ挿入
     await pool.query(`
-      INSERT INTO hot_springs (name, location, description, image_url)
+      INSERT INTO hot_springs (name, location, description, image_url, cold_bath, sauna, rotenburo, bubble_bath, jet_bath, facilities)
       VALUES
-        ('Onsen A', 'Location A', 'Description A', 'https://example.com/imageA.jpg'),
-        ('Onsen B', 'Location B', 'Description B', 'https://example.com/imageB.jpg')
-      ON CONFLICT DO NOTHING; -- 重複を避けるため
+        ('Onsen A', 'Location A', 'Description A', 'https://example.com/imageA.jpg', true, true, false, false, false, 'シャンプー・リンスあり'),
+        ('Onsen B', 'Location B', 'Description B', 'https://example.com/imageB.jpg', false, true, true, false, true, 'タオル貸出あり')
+      ON CONFLICT (name) DO NOTHING;
     `);
 
     await pool.query(`
@@ -44,7 +58,7 @@ async function setup() {
         (1, 1, 4.8, 'Amazing!'),
         (2, 2, 4.1, 'Very relaxing.'),
         (1, 3, 3.3, 'It was okay.')`)
-      
+
 
     console.log('PostgreSQLテーブル作成完了');
   } catch (error) {

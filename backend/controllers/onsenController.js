@@ -20,6 +20,14 @@ exports.getOnsenById = async (req, res) => {
       // 温泉が見つからない場合、404 Not Found
       return res.status(404).json({ message: '指定された温泉が見つかりませんでした。' });
     }
+    // 最新の平均評価を計算して反映
+    await db.query(`
+      UPDATE hot_springs
+      SET rating = (
+        SELECT AVG(rating) FROM ratings WHERE hot_spring_id = $1
+      )
+      WHERE id = $1
+    `, [id]);
     res.status(200).json(result.rows[0]); 
   } catch (err) {
     console.error('温泉詳細取得エラー:', err.message); // デバッグ用
@@ -52,7 +60,7 @@ exports.postRating = async (req, res) =>{
   if (typeof rating !== 'number' || rating < 1 || rating > 5) {
     return res.status(400).json({
       error: '評価の値が無効です。',
-      details: '評価は1.0から5.0の範囲で指定してください。'
+      details: '評価は0.0から5.0の範囲で指定してください。'
     });
   }
 

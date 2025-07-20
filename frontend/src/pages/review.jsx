@@ -107,7 +107,7 @@ function Review() {
           <input
             type="number"
             id="rating"
-            min="1.0"
+            min="0.0"
             max="5.0"
             step="0.1"
             value={rating}

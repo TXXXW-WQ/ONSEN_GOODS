@@ -31,7 +31,7 @@ function OnsenDetail() {
       }
     };
     fetchOnsenDetail();
-  },[id]);
+  }, [id]);
 
   // 評価一覧の取得
   useEffect(() => {
@@ -75,23 +75,41 @@ function OnsenDetail() {
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white shadow-xl rounded-xl mt-8 mb-8">
       <h1 className="text-4xl font-extrabold text-blue-700 mb-6 text-center">{onsen.name}</h1>
-      
+
       {onsen.image_url && (
         <div className="mb-6 text-center">
-          <img 
-            src={onsen.image_url} 
-            alt={onsen.name} 
-            className="w-full h-64 object-cover rounded-lg shadow-md border border-gray-200 mx-auto" 
+          <img
+            src={onsen.image_url}
+            alt={onsen.name}
+            className="w-full h-64 object-cover rounded-lg shadow-md border border-gray-200 mx-auto"
             style={{ maxWidth: '600px' }} // 画像の最大幅を調整
           />
         </div>
       )}
-      
+
       <div className="space-y-4 text-gray-800 text-lg">
         <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
         <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 'N/A'} / 5.0</p>
         <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
-        <p><strong className="font-semibold text-gray-700">設備:</strong> {onsen.facilities}</p>
+        <div className="flex flex-row flex-wrap gap-2">
+          {onsen.cold_bath && (
+            <p className="text-green-600 font-semibold border border-blue-400 rounded px-2 py-1 bg-blue-50">水風呂</p>
+          )}
+          {onsen.sauna && (
+            <p className="text-green-600 font-semibold border border-yellow-400 rounded px-2 py-1 bg-yellow-50">サウナ</p>
+          )}
+          {onsen.rotenburo && (
+            <p className="text-green-600 font-semibold border border-green-400 rounded px-2 py-1 bg-green-50">露天風呂</p>
+          )}
+          {onsen.bubble_bath && (
+            <p className="text-green-600 font-semibold border border-cyan-400 rounded px-2 py-1 bg-cyan-50">泡風呂</p>
+          )}
+          {onsen.jet_bath && (
+            <p className="text-green-600 font-semibold border border-indigo-400 rounded px-2 py-1 bg-indigo-50">ジェットバス</p>
+          )}
+        </div>
+
+        <p><strong className="font-semibold text-gray-700">その他の設備:</strong> {onsen.facilities}</p>
         <p className="text-sm text-gray-500 mt-4">最終更新日: {new Date(onsen.updated_at).toLocaleDateString()}</p>
       </div>
 
@@ -118,15 +136,15 @@ function OnsenDetail() {
       </div>
 
       <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-        
-        <Link 
-          to={ROUTES.HOME} 
+
+        <Link
+          to={ROUTES.HOME}
           className="inline-block px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
         >
           ← 温泉一覧に戻る
         </Link>
-        <Link 
-          to={ROUTES.REVIEW.replace(':id', id)} 
+        <Link
+          to={ROUTES.REVIEW.replace(':id', id)}
           className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
         >
           📝 この温泉を評価する →
