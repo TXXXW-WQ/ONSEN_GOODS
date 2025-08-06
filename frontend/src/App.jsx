@@ -2,10 +2,12 @@ import { useState } from 'react'
 import './App.css'
 import { Link, Route, Router, Routes } from 'react-router-dom'
 import Home from './pages/Home'
+import Login from './pages/Login'
+import Register from './pages/Register'
 import OnsenDetail from './pages/OnsenDetail'
 import Review from './pages/Review'
 import { ROUTES } from './const'
-ROUTES
+
 // ページが見つからないとき
 function NotFoundPage() {
   return (
@@ -18,13 +20,50 @@ function NotFoundPage() {
 }
 
 function App() {
- 
 
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className='p-6 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-8'>
-      <nav className='bg-blue-800 p-4 shadow-lg'>
-        <ul className='justify-center items-center list-none p-0 m-0'>
-          <li ><Link to={ROUTES.HOME} className='text-white text-4x1 font-extrabold tracking-wide hover:text-blue-200 transition-colors duration-300'>ONSEN GOODS</Link></li>
+      <nav className='bg-blue-800 p-4 shadow-lg relative'>
+        <ul className='justify-center items-center list-none p-0 m-0 flex'>
+          <li>
+            <Link to={ROUTES.HOME} className='text-white text-4xl font-extrabold tracking-wide hover:text-blue-200 transition-colors duration-300'>
+              ONSEN GOODS
+            </Link>
+          </li>
+          <li className="ml-auto relative">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="ml-4 px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600 focus:outline-none"
+            >
+              メニュー ▼
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                <Link
+                  to={ROUTES.HOME}
+                  className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  ホーム
+                </Link>
+                <Link
+                  to={ROUTES.LOGIN}
+                  className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  ログイン
+                </Link>
+                <Link
+                  to={ROUTES.REGISTER}
+                  className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  アカウント登録
+                </Link>
+              </div>
+            )}
+          </li>
         </ul>
       </nav>
 
@@ -32,6 +71,8 @@ function App() {
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail />} />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.REGISTER} element={<Register />} />
         <Route path={ROUTES.REVIEW} element={<Review />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
