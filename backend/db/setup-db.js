@@ -1,4 +1,4 @@
-import pool from './database.js' // database.jsからプールをインポート
+import pool from './database.js' // database.jsからpoolをインポート
 
 
 
@@ -7,6 +7,17 @@ async function setup() {
     // 既存テーブルを削除（依存関係のあるratings→hot_springsの順）
     await pool.query('DROP TABLE IF EXISTS ratings;');
     await pool.query('DROP TABLE IF EXISTS hot_springs;');
+    await pool.query('DROP TABLE IF EXISTS users;');
+
+    // usersテーブルの作成
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY, 
+        username VARCHAR(50) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        email VARCHAR(100) NOT NULL UNIQUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
 
     // hot_springsテーブルの作成
     await pool.query(`

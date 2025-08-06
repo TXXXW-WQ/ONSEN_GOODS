@@ -3,8 +3,12 @@ const cors = require('cors'); //CORSミドルウェアを読み込む
 const onsenRoutes = require('./routes/onsen'); //APIルートファイルを読み込む
 const path = require('path') //Node.jsのパスユーティリティを読み込む(念のため)
 
+
+
 const app = express();
 const port = 3000;
+
+
 
 // ミドルウェアの設定
 app.use(cors()); // 全てのオリジンからのリクエストを許可(開発用)
@@ -26,3 +30,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`ONSEN_GOODS Backend API listening at http://localhost:${port}`);
 });
+
