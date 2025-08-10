@@ -15,6 +15,15 @@ function Review() {
   const [errorSubmit, setErrorSubmit] = useState(null); // 評価送信エラー
   const [submitSuccess, setSubmitSuccess] = useState(false); //評価送信成功フラグ
 
+
+  useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    navigate(ROUTES.LOGIN, { state: { fromReview: true } });
+    
+  }
+}, [navigate]);
+
   // 評価対象の温泉名を取得
   useEffect(() => {
     const fetchOnsenName = async () => {
@@ -45,11 +54,14 @@ function Review() {
     setErrorSubmit(null);
     setSubmitSuccess(false);
 
+    const token = localStorage.getItem('token'); // トークンをローカルストレージから取得
+
     try {
       const response = await fetch(`http://localhost:3000/api/onsen/${id}/rating`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ rating, comment }), // 評価とコメントをJSON形式で送信
       });

@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../const'
 
 function Login() {
-  const [ email, setEmail ] = useState('')
-  const [ password, setPassword ] = useState('')
-  const [ error, setError ] = useState(null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
   const navigate = useNavigate()
+  const location = useLocation()
 
+  const fromReview = location.state && location.state.fromReview
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
@@ -24,16 +26,21 @@ function Login() {
         throw new Error(data.message || 'ログインに失敗しました。')
       }
 
-    //jwtトークンをローカルストレージに保存
-      localStorage.setItem('token', data.token) 
+      //jwtトークンをローカルストレージに保存
+      localStorage.setItem('token', data.token)
       navigate(ROUTES.HOME) // ログイン成功後、ホームページへリダイレクト
     } catch (err) {
       setError(err.message || 'ログイン中にエラーが発生しました。')
     }
-  } 
+  }
   return (
-        <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded shadow">
+    <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded shadow">
       <h2 className="text-2xl font-bold mb-6 text-center">ログイン</h2>
+      {fromReview && (
+        <div className="mb-4 text-blue-700 font-semibold text-center">
+          評価の投稿にはログインが必要です
+        </div>
+      )}
       {error && <div className="mb-4 text-red-600">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

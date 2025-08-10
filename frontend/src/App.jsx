@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { Link, Route, Router, Routes } from 'react-router-dom'
 import Home from './pages/Home'
@@ -22,6 +22,19 @@ function NotFoundPage() {
 function App() {
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [login, setLogin] = useState(false);
+
+  const token = localStorage.getItem('token'); // ローカルストレージからトークンを取得
+  useEffect(() => {
+    setLogin(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // ローカルストレージからトークンを削除
+    setLogin(false); // ログイン状態を更新
+    window.location.reload(); // ページをリロードしてログアウト状態を反映
+  }
+
   return (
     <div className='p-6 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-8'>
       <nav className='bg-blue-800 p-4 shadow-lg relative'>
@@ -47,20 +60,35 @@ function App() {
                 >
                   ホーム
                 </Link>
-                <Link
-                  to={ROUTES.LOGIN}
-                  className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  ログイン
-                </Link>
-                <Link
-                  to={ROUTES.REGISTER}
-                  className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  アカウント登録
-                </Link>
+                {!login && (
+                  <>
+                    <Link
+                      to={ROUTES.LOGIN}
+                      className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      ログイン
+                    </Link>
+                    <Link
+                      to={ROUTES.REGISTER}
+                      className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      アカウント登録
+                    </Link>
+                  </>
+                )}
+                {login && (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMenuOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-100"
+                  >
+                    ログアウト
+                  </button>
+                )}
               </div>
             )}
           </li>
