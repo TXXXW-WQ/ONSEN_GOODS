@@ -31,10 +31,11 @@ async function setup() {
         cold_bath BOOLEAN DEFAULT FALSE,
         sauna BOOLEAN DEFAULT FALSE,
         rotenburo BOOLEAN DEFAULT FALSE,
+        outdoor BOOLEAN DEFAULT FALSE,
         bubble_bath BOOLEAN DEFAULT FALSE,
         jet_bath BOOLEAN DEFAULT FALSE,
 
-        facilities TEXT,
+        shampoo BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -46,30 +47,47 @@ async function setup() {
         hot_spring_id INTEGER NOT NULL REFERENCES hot_springs(id),
         user_id INTEGER NOT NULL,
         rating REAL CHECK (rating >= 1.0 AND rating <= 5.0),
+        feel_hot BOOLEAN DEFAULT FALSE,
+        feel_cold BOOLEAN DEFAULT FALSE,
+        crowd BOOLEAN DEFAULT FALSE,
+        normal BOOLEAN DEFAULT FALSE,
+        no_crowd BOOLEAN DEFAULT FALSE,
+
         comment TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
     // 初期データ挿入
     await pool.query(`
-      INSERT INTO hot_springs (name, location, description, image_url, cold_bath, sauna, rotenburo, bubble_bath, jet_bath, facilities)
+      INSERT INTO hot_springs (
+        name, location, description, image_url, rating,
+        cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo, created_at
+      )
       VALUES
-        ('Onsen A', 'Location A', 'Description A', 'https://example.com/imageA.jpg', true, true, false, false, false, 'シャンプー・リンスあり'),
-        ('Onsen B', 'Location B', 'Description B', 'https://example.com/imageB.jpg', false, true, true, false, true, 'タオル貸出あり')
+        (
+          'Onsen A', 'Location A', 'Description A', 'https://example.com/imageA.jpg', 4.8,
+          true, true, false, true, false, false, true, NOW()
+        ),
+        (
+          'Onsen B', 'Location B', 'Description B', 'https://example.com/imageB.jpg', 4.2,
+          false, true, true, false, true, true, false, NOW()
+        )
       ON CONFLICT (name) DO NOTHING;
     `);
 
     await pool.query(`
-      INSERT INTO ratings (hot_spring_id, user_id, rating, comment) 
+      INSERT INTO ratings (
+        hot_spring_id, user_id, rating, feel_hot, feel_cold, crowd, normal, no_crowd, comment
+      ) 
       VALUES
-        (1, 1, 5.0, 'Great experience!'),
-        (1, 2, 4.5, 'Loved it!'),
-        (2, 1, 4.0, 'Very nice.'),
-        (2, 3, 3.5, 'It was okay.'),
-        (1, 1, 4.8, 'Amazing!'),
-        (2, 2, 4.1, 'Very relaxing.'),
-        (1, 3, 3.3, 'It was okay.')`)
-
+        (1, 1, 5.0, true, false, false, true, false, '最高の温泉体験でした！'),
+        (1, 2, 4.5, false, true, true, false, false, 'また来たいです。'),
+        (2, 1, 4.0, false, false, true, false, true, '施設がきれいでした。'),
+        (2, 3, 3.5, true, false, false, true, false, '混雑していましたが良かったです。'),
+        (1, 1, 4.8, false, true, false, false, true, 'お湯の温度がちょうど良かったです。'),
+        (2, 2, 4.1, true, false, true, false, false, 'サウナが気持ちよかったです。'),
+        (1, 3, 3.3, false, false, false, true, true, '普通でした。')
+    `);
 
     console.log('PostgreSQLテーブル作成完了');
   } catch (error) {
