@@ -93,24 +93,29 @@ function OnsenDetail() {
         <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
         <div className="flex flex-row flex-wrap gap-2">
           {onsen.cold_bath && (
-            <p className="text-green-600 font-semibold border border-blue-400 rounded px-2 py-1 bg-blue-50">水風呂</p>
+            <p className="text-blue-700 font-semibold border border-blue-400 rounded px-2 py-1 bg-blue-50">水風呂</p>
           )}
           {onsen.sauna && (
-            <p className="text-green-600 font-semibold border border-yellow-400 rounded px-2 py-1 bg-yellow-50">サウナ</p>
+            <p className="text-yellow-700 font-semibold border border-yellow-400 rounded px-2 py-1 bg-yellow-50">サウナ</p>
           )}
           {onsen.rotenburo && (
-            <p className="text-green-600 font-semibold border border-green-400 rounded px-2 py-1 bg-green-50">露天風呂</p>
+            <p className="text-green-700 font-semibold border border-green-400 rounded px-2 py-1 bg-green-50">露天風呂</p>
+          )}
+          {onsen.outdoor && (
+            <p className="text-lime-700 font-semibold border border-lime-400 rounded px-2 py-1 bg-lime-50">屋外風呂</p>
           )}
           {onsen.bubble_bath && (
-            <p className="text-green-600 font-semibold border border-cyan-400 rounded px-2 py-1 bg-cyan-50">泡風呂</p>
+            <p className="text-cyan-700 font-semibold border border-cyan-400 rounded px-2 py-1 bg-cyan-50">泡風呂</p>
           )}
           {onsen.jet_bath && (
-            <p className="text-green-600 font-semibold border border-indigo-400 rounded px-2 py-1 bg-indigo-50">ジェットバス</p>
+            <p className="text-indigo-700 font-semibold border border-indigo-400 rounded px-2 py-1 bg-indigo-50">ジェットバス</p>
+          )}
+          {onsen.shampoo && (
+            <p className="text-pink-700 font-semibold border border-pink-400 rounded px-2 py-1 bg-pink-50">シャンプーあり</p>
           )}
         </div>
-
-        <p><strong className="font-semibold text-gray-700">その他の設備:</strong> {onsen.facilities}</p>
-        <p className="text-sm text-gray-500 mt-4">最終更新日: {new Date(onsen.updated_at).toLocaleDateString()}</p>
+        <Link to={ROUTES.EDIT.replace(':id', id)} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備を編集</Link>
+        <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
       </div>
 
       {/* 評価一覧 */}

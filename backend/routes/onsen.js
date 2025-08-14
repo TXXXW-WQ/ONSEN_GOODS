@@ -7,7 +7,10 @@ const authenticateJWT = require('../middleware/auth'); // JWT認証ミドルウ�
 // 認証・認可
 router.post('/register', authController.register);
 router.post('/login', authController.login);
- 
+
+// ログイン中のユーザー情報を取得するエンドポイント
+router.get('/me', authenticateJWT, authController.checkLogin);
+
 // すべての温泉情報を取得するAPIエンドポイント
 // GET /api/onsen
 router.get('/', onsenController.getAllOnsen);
@@ -22,5 +25,12 @@ router.get('/:id/rating', onsenController.getRatingByOnsenId);
 // 特定の温泉に対する評価を投稿するAPIエンドポイント
 // POST /api/onsen/:id/rating
 router.post('/:id/rating', authenticateJWT,onsenController.postRating);
+
+// 特定の温泉の設備情報を更新するAPIエンドポイント
+// PUT /api/onsen/:id/facilities
+router.put('/:id/facilities', authenticateJWT, onsenController.editOnsenFacilities);
+
+
+
 
 module.exports = router;

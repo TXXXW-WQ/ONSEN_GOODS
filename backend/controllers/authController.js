@@ -41,8 +41,22 @@ exports.login = async (req, res) => {
 
     // JWTトークンの生成
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {expiresIn: '2h'});
-    res.json({ token });
+    
+    // Coookieにtoをセットセット
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 2 * 60 * 60 * 1000 // ==2h
+    });
+
+    res.json({ message: 'ログイン成功'})
   } catch (error) {
     res.status(500).json({ error: 'ログインエラー'});
   }
 };
+
+// ログイン状態をチェック
+exports.checkLogin = (req, res) => {
+  res.json({ user: req.user });
+}

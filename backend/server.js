@@ -1,17 +1,26 @@
+const cors = require('cors') // CORSミドルウェアを読み込む
+
 const express = require('express');
-const cors = require('cors'); //CORSミドルウェアを読み込む
 const onsenRoutes = require('./routes/onsen'); //APIルートファイルを読み込む
 const path = require('path') //Node.jsのパスユーティリティを読み込む(念のため)
+const cookieParser = require('cookie-parser'); //Cookieパーサーミドルウェアを読み込む
 
 
 
 const app = express();
 const port = 3000;
 
+// CORSの設定
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true
+};
 
+// Cookieパーサーミドルウェアを使用
+app.use(cookieParser());
 
 // ミドルウェアの設定
-app.use(cors()); // 全てのオリジンからのリクエストを許可(開発用)
+app.use(cors(corsOptions));
 app.use(express.json());
 
 //データベース接続の初期化

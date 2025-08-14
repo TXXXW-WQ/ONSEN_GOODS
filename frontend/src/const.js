@@ -6,5 +6,6 @@ export const ROUTES = {
   LOGIN: "/login",
   REGISTER: "/register",
   ONSEN_DETAIL: '/onsen/:id',
-  REVIEW: "/onsen/:id/review"
+  REVIEW: "/onsen/:id/review",
+  EDIT: "/onsen/:id/edit"
 }

@@ -19,13 +19,32 @@ function Review() {
   const [errorOnsen, setErrorOnsen] = useState(null);
   const [errorSubmit, setErrorSubmit] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [login, setLogin] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const checkLogin = async () => {
+      try {
+        const result = await fetch('http://localhost:3000/api/onsen/me', {
+          credentials: 'include'
+        });
+        if (result.ok) {
+          const data = await result.json();
+          setLogin(!!data.user);
+        } else {
+          setLogin(false);
+        }
+      } catch (error) {
+        console.error("ログイン状態の確認中にエラーが発生しました:", error);
+      }
+    }
+    checkLogin();
+  }, []);
+
+  useEffect(() => {
+    if (!login) {
       navigate(ROUTES.LOGIN, { state: { fromReview: true } });
     }
-  }, [navigate]);
+  }, [login]);
 
   useEffect(() => {
     const fetchOnsenName = async () => {
@@ -55,15 +74,14 @@ function Review() {
     setErrorSubmit(null);
     setSubmitSuccess(false);
 
-    const token = localStorage.getItem('token');
-
+    
     try {
       const response = await fetch(`http://localhost:3000/api/onsen/${id}/rating`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         },
+        credentials: 'include',
         body: JSON.stringify({
           rating,
           comment,

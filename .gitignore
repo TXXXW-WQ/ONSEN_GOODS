@@ -30,9 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 .env
 
-# SQLite データベースファイル
-**/*.db
-*.sqlite3
+
 
 # OS Generated Files
 .DS_Store

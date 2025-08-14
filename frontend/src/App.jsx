@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import './App.css'
 import { Link, Route, Router, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -7,6 +6,8 @@ import Register from './pages/Register'
 import OnsenDetail from './pages/OnsenDetail'
 import Review from './pages/Review'
 import { ROUTES } from './const'
+import Edit from './pages/Edit';
+
 
 // ページが見つからないとき
 function NotFoundPage() {
@@ -24,13 +25,28 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [login, setLogin] = useState(false);
 
-  const token = localStorage.getItem('token'); // ローカルストレージからトークンを取得
+  
   useEffect(() => {
-    setLogin(!!token);
+    const checkLogin = async () => {
+      try {
+      const result = fetch('http://localhost:3000/api/onsen/me', {
+        credentials: 'include'
+      })
+        if (result.ok) {
+          const data = await result.json();
+          setLogin(!!data.user)
+        } else {
+          setLogin(false);
+        }
+    } catch {
+      setLogin(false);
+    }
+    }
+    checkLogin();
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // ローカルストレージからトークンを削除
+
     setLogin(false); // ログイン状態を更新
     window.location.reload(); // ページをリロードしてログアウト状態を反映
   }
@@ -99,7 +115,8 @@ function App() {
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail />} />
-        <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.EDIT} element={<Edit />} />
+        <Route path={ROUTES.LOGIN} element={<Login setLogin={setLogin}/>} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
         <Route path={ROUTES.REVIEW} element={<Review />} />
         <Route path="*" element={<NotFoundPage />} />

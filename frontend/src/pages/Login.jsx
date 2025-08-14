@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../const'
 
-function Login() {
+function Login( {setLogin} ) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const navigate = useNavigate()
   const location = useLocation()
-
+  
   const fromReview = location.state && location.state.fromReview
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -19,6 +19,7 @@ function Login() {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include', // <= cookieによる追加
         body: JSON.stringify({ email, password })
       })
       const data = await res.json()
@@ -26,8 +27,9 @@ function Login() {
         throw new Error(data.message || 'ログインに失敗しました。')
       }
 
-      //jwtトークンをローカルストレージに保存
-      localStorage.setItem('token', data.token)
+      console.log('ログイン成功:')
+      setLogin(true)
+      
       navigate(ROUTES.HOME) // ログイン成功後、ホームページへリダイレクト
     } catch (err) {
       setError(err.message || 'ログイン中にエラーが発生しました。')

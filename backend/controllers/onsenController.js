@@ -4,10 +4,10 @@ const db = require('../db/database'); // db/database.jsからデータベース�
 exports.getAllOnsen = async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM hot_springs');
-    res.status(200).json(result.rows); 
+    res.status(200).json(result.rows);
   } catch (err) {
-    console.error('温泉リスト取得エラー:', err.message); 
-    res.status(500).json({ error: '温泉リストの取得中にエラーが発生しました。' }); 
+    console.error('温泉リスト取得エラー:', err.message);
+    res.status(500).json({ error: '温泉リストの取得中にエラーが発生しました。' });
   }
 }
 
@@ -28,7 +28,7 @@ exports.getOnsenById = async (req, res) => {
       )
       WHERE id = $1
     `, [id]);
-    res.status(200).json(result.rows[0]); 
+    res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error('温泉詳細取得エラー:', err.message); // デバッグ用
     return res.status(500).json({ error: '温泉詳細の取得中にエラーが発生しました。' });
@@ -37,7 +37,7 @@ exports.getOnsenById = async (req, res) => {
 
 // 2-1 特定の温泉に対する評価とコメントを取得するAPI
 exports.getRatingByOnsenId = async (req, res) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   try {
     const result = await db.query('SELECT * FROM ratings WHERE hot_spring_id = $1', [id]);
     if (result.rows.length === 0) {
@@ -45,14 +45,14 @@ exports.getRatingByOnsenId = async (req, res) => {
     }
     res.status(200).json(result.rows); // 評価とコメントのリストを返す
   } catch (err) {
-    console.error('温泉評価取得エラー:', err.message); 
+    console.error('温泉評価取得エラー:', err.message);
     res.status(500).json({ error: '温泉評価の取得中にエラーが発生しました。' });
   }
 };
 
 //3. 特定の温泉に対する評価を投稿するAPI(POST /api/onsen/:id/rating)
 // ユーザーから評価とコメントを受け取り、ratingsテーブルの保存、hot_springsテーブルの平均評価を更新。
-exports.postRating = async (req, res) =>{
+exports.postRating = async (req, res) => {
   const onsenId = req.params.id; // URLパラメータから温泉IDを取得
   const { userId = 1, rating, comment } = req.body; // リクエストボディから評価とコメントを取得
 
@@ -70,7 +70,7 @@ exports.postRating = async (req, res) =>{
     // 温泉の存在をチェック
     const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [onsenId]);
     if (onsenResult.rows.length === 0) {
-      res.status(404).json({ error: '評価対象の温泉が見つかりません。'});
+      res.status(404).json({ error: '評価対象の温泉が見つかりません。' });
       return;
     }
 
@@ -89,7 +89,7 @@ exports.postRating = async (req, res) =>{
       )
       WHERE id = $1
     `, [onsenId]);
-  
+
     // 更新後の温泉情報を取得
     const updatedOnsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [onsenId]);
     await client.query('COMMIT'); // トランザクションをコミット
@@ -97,8 +97,64 @@ exports.postRating = async (req, res) =>{
   } catch (err) {
     await client.query('ROLLBACK'); // エラー時はロールバック
     console.error('評価投稿エラー', err.message);
-    res.status(500).json({ error: '評価の投稿中にエラーが発生しました。'});
+    res.status(500).json({ error: '評価の投稿中にエラーが発生しました。' });
   } finally {
     client.release();
+  }
+};
+
+// 設備情報を取得してから更新するAPI (PUT /api/onsen/:id/facilities)
+exports.editOnsenFacilities = async (req, res) => {
+  const onsenId = req.params.id;
+  const {
+    cold_bath,
+    sauna,
+    rotenburo,
+    outdoor,
+    bubble_bath,
+    jet_bath,
+    shampoo
+  } = req.body;
+
+  try {
+    // まず現在の設備情報を取得
+    const currentResult = await db.query(
+      `SELECT cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo
+       FROM hot_springs WHERE id = $1`,
+      [onsenId]
+    );
+    if (currentResult.rows.length === 0) {
+      return res.status(404).json({ error: '温泉が見つかりません。' });
+    }
+   
+    // 設備情報を更新
+    const result = await db.query(
+      `UPDATE hot_springs
+       SET
+         cold_bath = $1,
+         sauna = $2,
+         rotenburo = $3,
+         outdoor = $4,
+         bubble_bath = $5,
+         jet_bath = $6,
+         shampoo = $7
+       WHERE id = $8
+       RETURNING *`,
+      [
+        cold_bath,
+        sauna,
+        rotenburo,
+        outdoor,
+        bubble_bath,
+        jet_bath,
+        shampoo,
+        onsenId
+      ]
+    );
+
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error('設備編集エラー:', err.message);
+    res.status(500).json({ error: '設備情報の更新中にエラーが発生しました。' });
   }
 };
