@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../const'
 
-function Login( {setLogin} ) {
+function Login({ login, setLogin }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -26,8 +26,6 @@ function Login( {setLogin} ) {
       if (!res.ok) {
         throw new Error(data.message || 'ログインに失敗しました。')
       }
-
-      console.log('ログイン成功:')
       setLogin(true)
       
       navigate(ROUTES.HOME) // ログイン成功後、ホームページへリダイレクト

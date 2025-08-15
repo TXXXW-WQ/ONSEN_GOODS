@@ -41,8 +41,8 @@ exports.login = async (req, res) => {
 
     // JWTトークンの生成
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {expiresIn: '2h'});
-    
-    // Coookieにtoをセットセット
+
+    // Cookieにtokenをセット
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

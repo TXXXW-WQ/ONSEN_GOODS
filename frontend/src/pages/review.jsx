@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '../const'
 
-function Review() {
+function Review({ login, setLogin }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -19,32 +19,15 @@ function Review() {
   const [errorOnsen, setErrorOnsen] = useState(null);
   const [errorSubmit, setErrorSubmit] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [login, setLogin] = useState(false);
-
-  useEffect(() => {
-    const checkLogin = async () => {
-      try {
-        const result = await fetch('http://localhost:3000/api/onsen/me', {
-          credentials: 'include'
-        });
-        if (result.ok) {
-          const data = await result.json();
-          setLogin(!!data.user);
-        } else {
-          setLogin(false);
-        }
-      } catch (error) {
-        console.error("ログイン状態の確認中にエラーが発生しました:", error);
-      }
-    }
-    checkLogin();
-  }, []);
+  
+  
 
   useEffect(() => {
     if (!login) {
       navigate(ROUTES.LOGIN, { state: { fromReview: true } });
+      // console.log("ログイン確認できず");
     }
-  }, [login]);
+  }, [login, navigate]);
 
   useEffect(() => {
     const fetchOnsenName = async () => {

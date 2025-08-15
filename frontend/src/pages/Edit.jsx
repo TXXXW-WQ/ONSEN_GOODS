@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
+import { ROUTES } from '../const';
 
-function Edit() {
+function Edit({ login, setLogin }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -17,6 +18,12 @@ function Edit() {
   const [bubbleBath, setBubbleBath] = useState(false);
   const [jetBath, setJetBath] = useState(false);
   const [shampoo, setShampoo] = useState(false);
+
+  useEffect(() => {
+      if (!login) {
+        navigate(ROUTES.LOGIN, { state: { fromReview: true } });
+      }
+    }, [login]);
 
   useEffect(() => {
     const fetchOnsenDetail = async () => {
@@ -54,6 +61,7 @@ function Edit() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           cold_bath: coldBath,
           sauna: sauna,

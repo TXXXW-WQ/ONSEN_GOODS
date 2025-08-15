@@ -34,7 +34,7 @@ function App() {
       })
         if (result.ok) {
           const data = await result.json();
-          setLogin(!!data.user)
+          setLogin(!!data.user);
         } else {
           setLogin(false);
         }
@@ -115,10 +115,10 @@ function App() {
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail />} />
-        <Route path={ROUTES.EDIT} element={<Edit />} />
-        <Route path={ROUTES.LOGIN} element={<Login setLogin={setLogin}/>} />
+        <Route path={ROUTES.EDIT} element={<Edit login={login} setLogin={setLogin}/>} />
+        <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
-        <Route path={ROUTES.REVIEW} element={<Review />} />
+        <Route path={ROUTES.REVIEW} element={<Review login={login} setLogin={setLogin}/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
