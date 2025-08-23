@@ -21,8 +21,9 @@ function Edit({ login, setLogin }) {
 
   useEffect(() => {
       if (!login) {
-        navigate(ROUTES.LOGIN, { state: { fromReview: true } });
+        navigate(ROUTES.LOGIN, { state: { fromEdit: true } });
       }
+      // console.log("login確認できず");
     }, [login]);
 
   useEffect(() => {

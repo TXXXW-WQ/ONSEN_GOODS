@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 function authenticateJWT(req, res, next) {
-  const token = req.s.token;
+  const token = req.cookies.token;
 
   if (!token) {
     return res.status(401).json({ message: 'トークンがありません'})

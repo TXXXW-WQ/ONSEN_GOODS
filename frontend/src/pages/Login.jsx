@@ -10,6 +10,7 @@ function Login({ login, setLogin }) {
   const location = useLocation()
   
   const fromReview = location.state && location.state.fromReview
+  const fromEdit = location.state && location.state.fromEdit
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
@@ -38,7 +39,12 @@ function Login({ login, setLogin }) {
       <h2 className="text-2xl font-bold mb-6 text-center">ログイン</h2>
       {fromReview && (
         <div className="mb-4 text-blue-700 font-semibold text-center">
-          評価の投稿にはログインが必要です
+          評価の投稿にはログインが必要です。
+        </div>
+      )}
+      {fromEdit && (
+        <div className="mb-4 text-blue-700 font-semibold text-center">
+          設備の編集にはログインが必要です。
         </div>
       )}
       {error && <div className="mb-4 text-red-600">{error}</div>}
