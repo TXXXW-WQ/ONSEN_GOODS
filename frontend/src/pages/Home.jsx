@@ -6,6 +6,7 @@ function Home() {
   const [onsenList, setOnsenList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     // コンポーネントがマウントされたとき、APIからデータ取得
@@ -35,14 +36,28 @@ function Home() {
     return <div>エラー: 温泉情報を取得できませんでした。</div>
   }
 
+  const filteredOnsenList = onsenList.filter(onsen =>
+    onsen.name.toLowerCase().includes(search.toLowerCase()) ||
+    (onsen.location && onsen.location.toLowerCase().includes(search.toLowerCase()))
+  );
+
   return (
     <div className='p-6 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-8'>
       <h1 className='text-4xl font-extrabold text-blue-700 mb-8 text-center'>温泉一覧ページ</h1>
-      {onsenList.length === 0 ? (
+      <div>
+        <input 
+          type="text"
+          placeholder="温泉名で検索"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border border-gray-300 rounded-lg p-2 w-full"
+        />
+      </div>
+      {filteredOnsenList.length === 0 ? (
         <p className="text-center text-gray-600 text-lg py-10">登録されている温泉はまだありません。</p>
       ):(
         <ul className="list-none max-w-2x1 max-auto gap-8">
-          {onsenList.map((onsen) => (
+          {filteredOnsenList.map((onsen) => (
             <li key={onsen.id} className='border border-gray-200 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white'>
               <Link to={ROUTES.ONSEN_DETAIL.replace(':id', onsen.id)} className="block p-5 text-decoration-none text-gray-800" >
                 <h2 className="text-2xl font-semibold text-blue-800 mb-2">{onsen.name}</h2>
