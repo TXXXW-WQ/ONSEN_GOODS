@@ -91,30 +91,42 @@ function OnsenDetail() {
         <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
         <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 'N/A'} / 5.0</p>
         <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
-        <div className="flex flex-row flex-wrap gap-2">
-          {onsen.cold_bath && (
-            <p className="text-blue-700 font-semibold border border-blue-400 rounded px-2 py-1 bg-blue-50">水風呂</p>
-          )}
-          {onsen.sauna && (
-            <p className="text-yellow-700 font-semibold border border-yellow-400 rounded px-2 py-1 bg-yellow-50">サウナ</p>
-          )}
-          {onsen.rotenburo && (
-            <p className="text-green-700 font-semibold border border-green-400 rounded px-2 py-1 bg-green-50">露天風呂</p>
-          )}
-          {onsen.outdoor && (
-            <p className="text-lime-700 font-semibold border border-lime-400 rounded px-2 py-1 bg-lime-50">屋外風呂</p>
-          )}
-          {onsen.bubble_bath && (
-            <p className="text-cyan-700 font-semibold border border-cyan-400 rounded px-2 py-1 bg-cyan-50">泡風呂</p>
-          )}
-          {onsen.jet_bath && (
-            <p className="text-indigo-700 font-semibold border border-indigo-400 rounded px-2 py-1 bg-indigo-50">ジェットバス</p>
-          )}
-          {onsen.shampoo && (
-            <p className="text-pink-700 font-semibold border border-pink-400 rounded px-2 py-1 bg-pink-50">シャンプーあり</p>
-          )}
+        {/* 設備のあり/なし率を縦並びで表示 */}
+        <div className="mt-6">
+          <h3 className="text-lg font-bold mb-2">設備のユーザー投票</h3>
+          <table className="w-full text-center border border-gray-300 rounded-lg">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="py-2 px-2">設備</th>
+                <th className="py-2 px-2 text-green-700">あり</th>
+                <th className="py-2 px-2 text-red-700">なし</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { key: 'cold_bath', label: '水風呂' },
+                { key: 'sauna', label: 'サウナ' },
+                { key: 'rotenburo', label: '露天風呂' },
+                { key: 'outdoor', label: 'アウトドア' },
+                { key: 'bubble_bath', label: 'バブルバス' },
+                { key: 'jet_bath', label: 'ジェットバス' },
+                { key: 'shampoo', label: 'シャンプー' },
+              ].map(facility => {
+                const rate = onsen.facilityRates?.[facility.key];
+                const percent = rate && rate.totalCount > 0 ? rate.percent : 0;
+                const nonePercent = rate && rate.totalCount > 0 ? Math.round((1 - (rate.trueCount / rate.totalCount)) * 1000) / 10 : 0;
+                return (
+                  <tr key={facility.key} className="border-t">
+                    <td className="py-2 px-2 font-semibold text-left">{facility.label}</td>
+                    <td className="py-2 px-2 text-green-700">{percent}%</td>
+                    <td className="py-2 px-2 text-red-700">{nonePercent}%</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-        <Link to={ROUTES.EDIT.replace(':id', id)} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備を編集</Link>
+        
         <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
       </div>
 

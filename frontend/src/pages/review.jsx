@@ -19,6 +19,14 @@ function Review({ login, setLogin }) {
   const [errorOnsen, setErrorOnsen] = useState(null);
   const [errorSubmit, setErrorSubmit] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  // 施設設備の状態
+  const [coldBath, setColdBath] = useState(false);
+  const [sauna, setSauna] = useState(false);
+  const [rotenburo, setRotenburo] = useState(false);
+  const [outdoor, setOutdoor] = useState(false);
+  const [bubbleBath, setBubbleBath] = useState(false);
+  const [jetBath, setJetBath] = useState(false);
+  const [shampoo, setShampoo] = useState(false);
   
   
 
@@ -72,7 +80,14 @@ function Review({ login, setLogin }) {
           feel_cold: feelCold,
           very_busy: veryBusy,
           normal,
-          empty
+          empty,
+          cold_bath: coldBath,
+          sauna,
+          rotenburo,
+          outdoor,
+          bubble_bath: bubbleBath,
+          jet_bath: jetBath,
+          shampoo
         }),
       });
 
@@ -122,7 +137,19 @@ function Review({ login, setLogin }) {
         </p>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+  <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">設備:</label>
+          <div className="flex flex-wrap gap-4 mb-4">
+            <label><input type="checkbox" checked={coldBath} onChange={e => setColdBath(e.target.checked)} /> 水風呂</label>
+            <label><input type="checkbox" checked={sauna} onChange={e => setSauna(e.target.checked)} /> サウナ</label>
+            <label><input type="checkbox" checked={rotenburo} onChange={e => setRotenburo(e.target.checked)} /> 露天風呂</label>
+            <label><input type="checkbox" checked={outdoor} onChange={e => setOutdoor(e.target.checked)} /> アウトドア</label>
+            <label><input type="checkbox" checked={bubbleBath} onChange={e => setBubbleBath(e.target.checked)} /> バブルバス</label>
+            <label><input type="checkbox" checked={jetBath} onChange={e => setJetBath(e.target.checked)} /> ジェットバス</label>
+            <label><input type="checkbox" checked={shampoo} onChange={e => setShampoo(e.target.checked)} /> シャンプー</label>
+          </div>
+        </div>
         <div>
           <label htmlFor='rating' className="block text-gray-700 text-sm font-bold mb-2">評価 (1.0 - 5.0):</label>
           <input

@@ -11,15 +11,135 @@ exports.getAllOnsen = async (req, res) => {
   }
 }
 
+
 //2. 特定の温泉の詳細情報を取得 (GET /api/onsen/:id)
 exports.getOnsenById = async (req, res) => {
   const { id } = req.params; // URLパスから温泉IDを取得
   try {
     const result = await db.query('SELECT * FROM hot_springs WHERE id = $1', [id]);
     if (result.rows.length === 0) {
-      // 温泉が見つからない場合、404 Not Found
       return res.status(404).json({ message: '指定された温泉が見つかりませんでした。' });
     }
+
+    // 各設備の「あり率」を集計
+    const facilities = [
+      'cold_bath',
+      'sauna',
+      'rotenburo',
+      'outdoor',
+      'bubble_bath',
+      'jet_bath',
+      'shampoo'
+    ];
+    // 1回のクエリで全設備カラムを一括反映
+    await db.query(
+      `
+      UPDATE hot_springs
+      SET
+        cold_bath = COALESCE((
+          SELECT CASE
+            WHEN COUNT(*) FILTER (WHERE r.cold_bath IS TRUE) > COUNT(*) FILTER (WHERE r.cold_bath IS FALSE) THEN TRUE
+            WHEN COUNT(*) FILTER (WHERE r.cold_bath IS TRUE) < COUNT(*) FILTER (WHERE r.cold_bath IS FALSE) THEN FALSE
+            WHEN COUNT(*) FILTER (WHERE r.cold_bath IS TRUE) = 0 AND COUNT(*) FILTER (WHERE r.cold_bath IS FALSE) = 0 THEN FALSE
+            ELSE FALSE
+          END
+          FROM ratings r WHERE r.hot_spring_id = hot_springs.id
+        ), FALSE),
+        sauna = COALESCE((
+          SELECT CASE
+            WHEN COUNT(*) FILTER (WHERE r.sauna IS TRUE) > COUNT(*) FILTER (WHERE r.sauna IS FALSE) THEN TRUE
+            WHEN COUNT(*) FILTER (WHERE r.sauna IS TRUE) < COUNT(*) FILTER (WHERE r.sauna IS FALSE) THEN FALSE
+            WHEN COUNT(*) FILTER (WHERE r.sauna IS TRUE) = 0 AND COUNT(*) FILTER (WHERE r.sauna IS FALSE) = 0 THEN FALSE
+            ELSE FALSE
+          END
+          FROM ratings r WHERE r.hot_spring_id = hot_springs.id
+        ), FALSE),
+        rotenburo = COALESCE((
+          SELECT CASE
+            WHEN COUNT(*) FILTER (WHERE r.rotenburo IS TRUE) > COUNT(*) FILTER (WHERE r.rotenburo IS FALSE) THEN TRUE
+            WHEN COUNT(*) FILTER (WHERE r.rotenburo IS TRUE) < COUNT(*) FILTER (WHERE r.rotenburo IS FALSE) THEN FALSE
+            WHEN COUNT(*) FILTER (WHERE r.rotenburo IS TRUE) = 0 AND COUNT(*) FILTER (WHERE r.rotenburo IS FALSE) = 0 THEN FALSE
+            ELSE FALSE
+          END
+          FROM ratings r WHERE r.hot_spring_id = hot_springs.id
+        ), FALSE),
+        outdoor = COALESCE((
+          SELECT CASE
+            WHEN COUNT(*) FILTER (WHERE r.outdoor IS TRUE) > COUNT(*) FILTER (WHERE r.outdoor IS FALSE) THEN TRUE
+            WHEN COUNT(*) FILTER (WHERE r.outdoor IS TRUE) < COUNT(*) FILTER (WHERE r.outdoor IS FALSE) THEN FALSE
+            WHEN COUNT(*) FILTER (WHERE r.outdoor IS TRUE) = 0 AND COUNT(*) FILTER (WHERE r.outdoor IS FALSE) = 0 THEN FALSE
+            ELSE FALSE
+          END
+          FROM ratings r WHERE r.hot_spring_id = hot_springs.id
+        ), FALSE),
+        bubble_bath = COALESCE((
+          SELECT CASE
+            WHEN COUNT(*) FILTER (WHERE r.bubble_bath IS TRUE) > COUNT(*) FILTER (WHERE r.bubble_bath IS FALSE) THEN TRUE
+            WHEN COUNT(*) FILTER (WHERE r.bubble_bath IS TRUE) < COUNT(*) FILTER (WHERE r.bubble_bath IS FALSE) THEN FALSE
+            WHEN COUNT(*) FILTER (WHERE r.bubble_bath IS TRUE) = 0 AND COUNT(*) FILTER (WHERE r.bubble_bath IS FALSE) = 0 THEN FALSE
+            ELSE FALSE
+          END
+          FROM ratings r WHERE r.hot_spring_id = hot_springs.id
+        ), FALSE),
+        jet_bath = COALESCE((
+          SELECT CASE
+            WHEN COUNT(*) FILTER (WHERE r.jet_bath IS TRUE) > COUNT(*) FILTER (WHERE r.jet_bath IS FALSE) THEN TRUE
+            WHEN COUNT(*) FILTER (WHERE r.jet_bath IS TRUE) < COUNT(*) FILTER (WHERE r.jet_bath IS FALSE) THEN FALSE
+            WHEN COUNT(*) FILTER (WHERE r.jet_bath IS TRUE) = 0 AND COUNT(*) FILTER (WHERE r.jet_bath IS FALSE) = 0 THEN FALSE
+            ELSE FALSE
+          END
+          FROM ratings r WHERE r.hot_spring_id = hot_springs.id
+        ), FALSE),
+        shampoo = COALESCE((
+          SELECT CASE
+            WHEN COUNT(*) FILTER (WHERE r.shampoo IS TRUE) > COUNT(*) FILTER (WHERE r.shampoo IS FALSE) THEN TRUE
+            WHEN COUNT(*) FILTER (WHERE r.shampoo IS TRUE) < COUNT(*) FILTER (WHERE r.shampoo IS FALSE) THEN FALSE
+            WHEN COUNT(*) FILTER (WHERE r.shampoo IS TRUE) = 0 AND COUNT(*) FILTER (WHERE r.shampoo IS FALSE) = 0 THEN FALSE
+            ELSE FALSE
+          END
+          FROM ratings r WHERE r.hot_spring_id = hot_springs.id
+        ), FALSE)
+      WHERE id = $1
+      `,
+      [id]
+    );
+    const rateQuery = `
+      SELECT
+        COUNT(*) FILTER (WHERE cold_bath IS TRUE) AS cold_bath_true,
+        COUNT(*) FILTER (WHERE cold_bath IS NOT NULL) AS cold_bath_total,
+        COUNT(*) FILTER (WHERE sauna IS TRUE) AS sauna_true,
+        COUNT(*) FILTER (WHERE sauna IS NOT NULL) AS sauna_total,
+        COUNT(*) FILTER (WHERE rotenburo IS TRUE) AS rotenburo_true,
+        COUNT(*) FILTER (WHERE rotenburo IS NOT NULL) AS rotenburo_total,
+        COUNT(*) FILTER (WHERE outdoor IS TRUE) AS outdoor_true,
+        COUNT(*) FILTER (WHERE outdoor IS NOT NULL) AS outdoor_total,
+        COUNT(*) FILTER (WHERE bubble_bath IS TRUE) AS bubble_bath_true,
+        COUNT(*) FILTER (WHERE bubble_bath IS NOT NULL) AS bubble_bath_total,
+        COUNT(*) FILTER (WHERE jet_bath IS TRUE) AS jet_bath_true,
+        COUNT(*) FILTER (WHERE jet_bath IS NOT NULL) AS jet_bath_total,
+        COUNT(*) FILTER (WHERE shampoo IS TRUE) AS shampoo_true,
+        COUNT(*) FILTER (WHERE shampoo IS NOT NULL) AS shampoo_total
+      FROM ratings
+      WHERE hot_spring_id = $1
+    `;
+    const rateResult = await db.query(rateQuery, [id]);
+    const rateRow = rateResult.rows[0];
+
+    const facilityRates = {};
+    facilities.forEach(facility => {
+      const trueCount = Number(rateRow[`${facility}_true`]);
+      const totalCount = Number(rateRow[`${facility}_total`]);
+      facilityRates[facility] = {
+        percent: totalCount > 0 ? Math.round((trueCount / totalCount) * 1000) / 10 : null,
+        trueCount,
+        totalCount
+      };
+    });
+
+    // 温泉情報にfacilityRatesを追加して返す
+    const onsen = result.rows[0];
+    onsen.facilityRates = facilityRates;
+
     // 最新の平均評価を計算して反映
     await db.query(`
       UPDATE hot_springs
@@ -28,9 +148,11 @@ exports.getOnsenById = async (req, res) => {
       )
       WHERE id = $1
     `, [id]);
-    res.status(200).json(result.rows[0]);
+
+
+    res.status(200).json(onsen);
   } catch (err) {
-    console.error('温泉詳細取得エラー:', err.message); // デバッグ用
+    console.error('温泉詳細取得エラー:', err.message);
     return res.status(500).json({ error: '温泉詳細の取得中にエラーが発生しました。' });
   }
 };
@@ -54,7 +176,19 @@ exports.getRatingByOnsenId = async (req, res) => {
 // ユーザーから評価とコメントを受け取り、ratingsテーブルの保存、hot_springsテーブルの平均評価を更新。
 exports.postRating = async (req, res) => {
   const onsenId = req.params.id; // URLパラメータから温泉IDを取得
-  const { userId = 1, rating, comment } = req.body; // リクエストボディから評価とコメントを取得
+  // 設備情報も受け取る
+  const {
+    userId = 1,
+    rating,
+    comment,
+    cold_bath,
+    sauna,
+    rotenburo,
+    outdoor,
+    bubble_bath,
+    jet_bath,
+    shampoo
+  } = req.body; // リクエストボディから評価・コメント・設備を取得
 
   // 
   if (typeof rating !== 'number' || rating < 1 || rating > 5) {
@@ -75,10 +209,25 @@ exports.postRating = async (req, res) => {
     }
 
     await client.query('BEGIN'); // トランザクション開始
-    // 評価を挿入
+    // 評価＋設備を挿入
     await client.query(
-      'INSERT INTO ratings (hot_spring_id, user_id, rating, comment) VALUES ($1, $2, $3, $4)',
-      [onsenId, userId, rating, comment]
+      `INSERT INTO ratings (
+        hot_spring_id, user_id, rating, comment,
+        cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [
+        onsenId,
+        userId,
+        rating,
+        comment,
+        cold_bath,
+        sauna,
+        rotenburo,
+        outdoor,
+        bubble_bath,
+        jet_bath,
+        shampoo
+      ]
     );
 
     // 平均の評価を再計算して更新
@@ -103,58 +252,3 @@ exports.postRating = async (req, res) => {
   }
 };
 
-// 設備情報を取得してから更新するAPI (PUT /api/onsen/:id/facilities)
-exports.editOnsenFacilities = async (req, res) => {
-  const onsenId = req.params.id;
-  const {
-    cold_bath,
-    sauna,
-    rotenburo,
-    outdoor,
-    bubble_bath,
-    jet_bath,
-    shampoo
-  } = req.body;
-
-  try {
-    // まず現在の設備情報を取得
-    const currentResult = await db.query(
-      `SELECT cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo
-       FROM hot_springs WHERE id = $1`,
-      [onsenId]
-    );
-    if (currentResult.rows.length === 0) {
-      return res.status(404).json({ error: '温泉が見つかりません。' });
-    }
-   
-    // 設備情報を更新
-    const result = await db.query(
-      `UPDATE hot_springs
-       SET
-         cold_bath = $1,
-         sauna = $2,
-         rotenburo = $3,
-         outdoor = $4,
-         bubble_bath = $5,
-         jet_bath = $6,
-         shampoo = $7
-       WHERE id = $8
-       RETURNING *`,
-      [
-        cold_bath,
-        sauna,
-        rotenburo,
-        outdoor,
-        bubble_bath,
-        jet_bath,
-        shampoo,
-        onsenId
-      ]
-    );
-
-    res.status(200).json(result.rows[0]);
-  } catch (err) {
-    console.error('設備編集エラー:', err.message);
-    res.status(500).json({ error: '設備情報の更新中にエラーが発生しました。' });
-  }
-};

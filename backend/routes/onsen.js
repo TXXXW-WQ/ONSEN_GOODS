@@ -26,9 +26,6 @@ router.get('/:id/rating', onsenController.getRatingByOnsenId);
 // POST /api/onsen/:id/rating
 router.post('/:id/rating', authenticateJWT,onsenController.postRating);
 
-// 特定の温泉の設備情報を更新するAPIエンドポイント
-// PUT /api/onsen/:id/facilities
-router.put('/:id/facilities', authenticateJWT, onsenController.editOnsenFacilities);
 
 
 

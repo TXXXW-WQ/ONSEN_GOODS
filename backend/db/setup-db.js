@@ -52,8 +52,14 @@ async function setup() {
         crowd BOOLEAN DEFAULT FALSE,
         normal BOOLEAN DEFAULT FALSE,
         no_crowd BOOLEAN DEFAULT FALSE,
-
         comment TEXT,
+        cold_bath BOOLEAN,
+        sauna BOOLEAN,
+        rotenburo BOOLEAN,
+        outdoor BOOLEAN,
+        bubble_bath BOOLEAN,
+        jet_bath BOOLEAN,
+        shampoo BOOLEAN,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
