@@ -142,8 +142,8 @@ function OnsenDetail() {
             {ratings.map((r, i) => (
               <li key={r.id || i} className="border rounded-lg p-4 shadow-sm bg-gray-50">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-yellow-600">★ {Number(r.rating_value).toFixed(1)} / 5.0</span>
-                  <span className="text-xs text-gray-400 ml-2">{r.username || '匿名'}・{new Date(r.created_at).toLocaleDateString()}</span>
+                  <span className="font-semibold text-yellow-600">{r.rating_value ? `★ ${Number(r.rating_value).toFixed(1)} / 5.0` : ''}</span>
+                  <span className="text-xs text-gray-400 ml-2">匿名・{new Date(r.created_at).toLocaleDateString()}</span>
                 </div>
                 <div className="text-gray-800">{r.comment}</div>
               </li>
