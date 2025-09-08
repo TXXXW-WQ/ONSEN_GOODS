@@ -29,13 +29,26 @@ async function setup() {
         image_url VARCHAR(255),
         rating REAL CHECK (rating >= 0.0 AND rating <= 5.0) DEFAULT 0.0,
         cold_bath BOOLEAN DEFAULT FALSE,
+        cold_bath_good INTEGER DEFAULT 0,
+        cold_bath_bad INTEGER DEFAULT 0,
         sauna BOOLEAN DEFAULT FALSE,
+        sauna_good INTEGER DEFAULT 0,
+        sauna_bad INTEGER DEFAULT 0,
         rotenburo BOOLEAN DEFAULT FALSE,
+        rotenburo_good INTEGER DEFAULT 0,
+        rotenburo_bad INTEGER DEFAULT 0,
         outdoor BOOLEAN DEFAULT FALSE,
+        outdoor_good INTEGER DEFAULT 0,
+        outdoor_bad INTEGER DEFAULT 0,
         bubble_bath BOOLEAN DEFAULT FALSE,
+        bubble_bath_good INTEGER DEFAULT 0,
+        bubble_bath_bad INTEGER DEFAULT 0,
         jet_bath BOOLEAN DEFAULT FALSE,
-
+        jet_bath_good INTEGER DEFAULT 0,
+        jet_bath_bad INTEGER DEFAULT 0,
         shampoo BOOLEAN DEFAULT FALSE,
+        shampoo_good INTEGER DEFAULT 0,
+        shampoo_bad INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
