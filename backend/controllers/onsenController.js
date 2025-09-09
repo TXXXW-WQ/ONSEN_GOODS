@@ -106,61 +106,7 @@ exports.postRating = async (req, res) => {
   }
 };
 
-// 設備情報を取得してから更新するAPI (PUT /api/onsen/:id/facilities)
-exports.editOnsenFacilities = async (req, res) => {
-  const onsenId = req.params.id;
-  const {
-    cold_bath,
-    sauna,
-    rotenburo,
-    outdoor,
-    bubble_bath,
-    jet_bath,
-    shampoo
-  } = req.body;
 
-  try {
-    // まず現在の設備情報を取得
-    const currentResult = await db.query(
-      `SELECT cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo
-       FROM hot_springs WHERE id = $1`,
-      [onsenId]
-    );
-    if (currentResult.rows.length === 0) {
-      return res.status(404).json({ error: '温泉が見つかりません。' });
-    }
-
-    // 設備情報を更新
-    const result = await db.query(
-      `UPDATE hot_springs
-       SET
-         cold_bath = $1,
-         sauna = $2,
-         rotenburo = $3,
-         outdoor = $4,
-         bubble_bath = $5,
-         jet_bath = $6,
-         shampoo = $7
-       WHERE id = $8
-       RETURNING *`,
-      [
-        cold_bath,
-        sauna,
-        rotenburo,
-        outdoor,
-        bubble_bath,
-        jet_bath,
-        shampoo,
-        onsenId
-      ]
-    );
-
-    res.status(200).json(result.rows[0]);
-  } catch (err) {
-    console.error('設備編集エラー:', err.message);
-    res.status(500).json({ error: '設備情報の更新中にエラーが発生しました。' });
-  }
-};
 
 // 各情報の評価(good/bad)をpostするapi
 // dbはpg.Poolインスタンスとして定義されていると仮定
