@@ -16,6 +16,12 @@ async function setup() {
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
+        role VARCHAR(20) DEFAULT '探湯者',
+        review_count INTEGER DEFAULT 0,
+        picuture_count INTEGER DEFAULT 0,
+        discription_edit_count INTEGER DEFAULT 0,
+        onsen_add_count INTEGER DEFAULT 0,
+        contribution_score INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
 
@@ -101,6 +107,14 @@ async function setup() {
         (2, 2, 4.1, true, false, true, false, false, 'サウナが気持ちよかったです。'),
         (1, 3, 3.3, false, false, false, true, true, '普通でした。')
     `);
+
+    await pool.query(`
+      INSERT INTO users (
+        username, password, email
+    )
+        VALUES
+        ('test', 'test@gmail.com', 'test')
+        `);
 
     console.log('PostgreSQLテーブル作成完了');
   } catch (error) {
