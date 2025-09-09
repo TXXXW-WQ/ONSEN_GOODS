@@ -31,7 +31,7 @@ router.post('/:id/rating', authenticateJWT,onsenController.postRating);
 // router.put('/:id/facilities', authenticateJWT, onsenController.editOnsenFacilities);
 
 // 温泉の各情報(現在は施設情報のみ)に対するgood/badの数を更新する
-router.post('/:id/facilities', onsenController.postGoodAndBad)
+router.post('/:id/facilities', authenticateJWT, onsenController.postGoodAndBad)
 
 
 
