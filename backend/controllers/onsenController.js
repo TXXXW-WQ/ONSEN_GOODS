@@ -1,5 +1,5 @@
 const db = require('../db/database'); // db/database.jsからデータベース接続を読み込む
-
+const { updateUserContribution } = require('./util/contribution'); // 貢献度更新関数をインポート
 // 1. 全ての温泉情報を取得 (GET /api/onsen)
 exports.getAllOnsen = async (req, res) => {
   try {
@@ -56,7 +56,7 @@ exports.postRating = async (req, res) => {
   const onsenId = req.params.id; // URLパラメータから温泉IDを取得
   const { userId = 1, rating, comment } = req.body; // リクエストボディから評価とコメントを取得
 
-  // 
+  
   if (typeof rating !== 'number' || rating < 1 || rating > 5) {
     return res.status(400).json({
       error: '評価の値が無効です。',
@@ -80,6 +80,9 @@ exports.postRating = async (req, res) => {
       'INSERT INTO ratings (hot_spring_id, user_id, rating, comment) VALUES ($1, $2, $3, $4)',
       [onsenId, userId, rating, comment]
     );
+
+    // ユーザーのレビュー数と貢献度を増やす
+    await updateUserContribution(client, userId, 'review_count');
 
     // 平均の評価を再計算して更新
     await client.query(`
