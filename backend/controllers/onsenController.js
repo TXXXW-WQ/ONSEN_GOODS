@@ -126,7 +126,7 @@ exports.editOnsenFacilities = async (req, res) => {
     if (currentResult.rows.length === 0) {
       return res.status(404).json({ error: '温泉が見つかりません。' });
     }
-   
+
     // 設備情報を更新
     const result = await db.query(
       `UPDATE hot_springs
@@ -158,3 +158,88 @@ exports.editOnsenFacilities = async (req, res) => {
     res.status(500).json({ error: '設備情報の更新中にエラーが発生しました。' });
   }
 };
+
+// 各情報の評価(good/bad)をpostするapi
+exports.postGoodAndBad = async (req, res) => {
+  const onsenId = req.params.id;
+  const updates = req.body;
+
+  const updateFields = [];
+  const updateValues = [];
+  
+  let client;
+  try {
+
+    client = await db.connect();
+    // 温泉の存在をチェック
+    const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [onsenId]);
+    if (onsenResult.rows.length === 0) {
+      res.status(404).json({ error: '評価対象の温泉が見つかりません。' });
+      return;
+    }
+
+    const currentOnsen = onsenResult.rows[0];
+
+
+    for (const facility in updates) {
+      if (updates.hasOwnProperty(facility)) {
+        const ratingType = updates[facility];
+        // 評価タイプが「good」または「bad」の場合のみ処理
+        if (ratingType == 'good' || ratingType == 'bad') {
+          const goodColumnName = `${facility}_good`;
+          const badColumnName = `${facility}_bad`;
+          
+          // good/badをインクリメント
+          if (ratingType === "good") {
+            currentOnsen[goodColumnName]++;
+          } else {
+            currentOnsen[badColumnName]++;
+          }
+          
+          // 施設のboolean値を更新
+          const newFacilityValue = currentOnsen[goodColumnName] > currentOnsen[badColumnName];
+
+          // SQLのSET句と値を動的に構築
+          updateFields.push(`${goodColumnName} = $${updateValues.length + 1}`);
+          updateValues.push(currentOnsen[goodColumnName]);
+          
+          updateFields.push(`${badColumnName} = $${updateValues.length + 1}`);
+          updateValues.push(currentOnsen[badColumnName]);
+          
+          updateFields.push(`${facility} = $${updateValues.length + 1}`);
+          updateValues.push(newFacilityValue);
+        } 
+      }
+    }
+
+    // 更新するフィールドがなければエラーを返す
+    if (updateFields.length === 0) {
+      return res.status(400).json({ error: '有効な評価データがありません。' });
+    }
+
+    // 全ての更新を実行
+    const query = `
+      UPDATE hot_springs
+      SET ${updateFields.join(', ')}
+      WHERE id = $${updateValues.length + 1}
+      RETURNING *;
+    `;
+
+    updateValues.push(onsenId); 
+
+    const result = await client.query(query, updateValues);
+
+    res.status(200).json({
+      message: '施設評価が更新されました',
+      onsen: result.rows[0],
+    });
+  } catch (err) {
+    console.error('Good/Bad評価エラー:', err.message);
+    res.status(500).json({ error: 'Good/Bad評価の更新中にエラーが発生しました。' });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+      
+}

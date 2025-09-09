@@ -28,7 +28,10 @@ router.post('/:id/rating', authenticateJWT,onsenController.postRating);
 
 // 特定の温泉の設備情報を更新するAPIエンドポイント
 // PUT /api/onsen/:id/facilities
-router.put('/:id/facilities', authenticateJWT, onsenController.editOnsenFacilities);
+// router.put('/:id/facilities', authenticateJWT, onsenController.editOnsenFacilities);
+
+// 温泉の各情報(現在は施設情報のみ)に対するgood/badの数を更新する
+router.post('/:id/facilities', onsenController.postGoodAndBad)
 
 
 
