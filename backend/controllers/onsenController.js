@@ -1,5 +1,7 @@
+const { use } = require('react');
 const db = require('../db/database'); // db/database.jsからデータベース接続を読み込む
 const { updateUserContribution } = require('./util/contribution'); // 貢献度更新関数をインポート
+const { checkLogin } = require('./authController');
 // 1. 全ての温泉情報を取得 (GET /api/onsen)
 exports.getAllOnsen = async (req, res) => {
   try {
@@ -54,7 +56,8 @@ exports.getRatingByOnsenId = async (req, res) => {
 // ユーザーから評価とコメントを受け取り、ratingsテーブルの保存、hot_springsテーブルの平均評価を更新。
 exports.postRating = async (req, res) => {
   const onsenId = req.params.id; // URLパラメータから温泉IDを取得
-  const { userId = 1, rating, comment } = req.body; // リクエストボディから評価とコメントを取得
+  const userId = req.user.id;
+  const {rating, comment} = req.body // リクエストボディから評価とコメントを取得
 
   
   if (typeof rating !== 'number' || rating < 1 || rating > 5) {
@@ -104,9 +107,7 @@ exports.postRating = async (req, res) => {
   } finally {
     client.release();
   }
-};
-
-
+}
 
 // 各情報の評価(good/bad)をpostするapi
 // dbはpg.Poolインスタンスとして定義されていると仮定
@@ -194,3 +195,42 @@ exports.postGoodAndBad = async (req, res) => {
     }
   }
 };
+
+// 温泉(温泉の名前)を追加するAPI
+// 温泉名、所在地、説明、画像urlが飛んでくる予定
+// Home,もしくはHomeから飛べる専用ページから呼ばれる
+exports.addOnsenName = async (req, res) => {
+  
+  const userId = req.body.userId
+  const name = req.body.name;
+  const location = req.body.location || null;
+  const description = req.body.description || '';
+  const imageUrl = req.body.imageUrl || null;
+
+  // ユーザーの権限の確認
+  const userRole = await db.query(`SELECT role FROM users WHERE id = $1`, [userId]);
+  if (userRole.rows.length === 0 || userRole.rows[0].role === '探湯者' || userRole.rows[0].role === '温泉家') {
+    return res.status(403).json({ error: '温泉追加の権限がありません。' });
+  }
+
+  // 入力された温泉名の確認
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return res.status(400).json({ error: '有効な温泉名を提供してください。' });
+  }
+
+  // 温泉のidを生成(重複チェック)
+  const onsenId = 9999; // 仮の温泉ID、実際にはDBから取得する必要があります
+  
+  try {
+    
+    const result = await db.query(`
+      INSERT INTO hot_springs (
+      id, name, location, description, created_at
+      ) VALUES ($1, $2, $3, $4, NOW())
+      RETURNING *;
+    `, [name.trim(), location, description, imageUrl]);
+    res.status(201).json({ message: '温泉が正常に追加されました。', onsen: result.rows[0] });
+  } catch (err) {
+    console.error('温泉追加エラー:', err.message);  
+  }
+}

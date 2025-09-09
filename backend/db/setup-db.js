@@ -31,7 +31,7 @@ async function setup() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL UNIQUE,
         location VARCHAR(255) NOT NULL,
-        description TEXT,
+        description TEXT dEFAULT '現在この温泉に対する説明はありません',
         image_url VARCHAR(255),
         rating REAL CHECK (rating >= 0.0 AND rating <= 5.0) DEFAULT 0.0,
         cold_bath BOOLEAN DEFAULT FALSE,
