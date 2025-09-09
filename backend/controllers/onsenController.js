@@ -196,7 +196,7 @@ exports.postGoodAndBad = async (req, res) => {
   }
 };
 
-// 温泉(温泉の名前)を追加するAPI
+// 温泉を追加するAPI
 // 温泉名、所在地、説明、画像urlが飛んでくる予定
 // Home,もしくはHomeから飛べる専用ページから呼ばれる
 exports.addOnsenName = async (req, res) => {
