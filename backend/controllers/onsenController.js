@@ -218,17 +218,16 @@ exports.addOnsenName = async (req, res) => {
     return res.status(400).json({ error: '有効な温泉名を提供してください。' });
   }
 
-  // 温泉のidを生成(重複チェック)
-  const onsenId = 9999; // 仮の温泉ID、実際にはDBから取得する必要があります
-  
   try {
     
+    // 温泉の追加実行
     const result = await db.query(`
       INSERT INTO hot_springs (
-      id, name, location, description, created_at
-      ) VALUES ($1, $2, $3, $4, NOW())
+      name, location, description, created_at
+      ) VALUES ($1, $2, $3, NOW())
       RETURNING *;
     `, [name.trim(), location, description, imageUrl]);
+    
     res.status(201).json({ message: '温泉が正常に追加されました。', onsen: result.rows[0] });
   } catch (err) {
     console.error('温泉追加エラー:', err.message);  
