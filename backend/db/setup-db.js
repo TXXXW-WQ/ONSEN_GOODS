@@ -1,6 +1,5 @@
-import pool from './database.js' // database.jsからpoolをインポート
-
-
+const pool = require('./database.js');
+const { hashPassword } = require('./testUser.js');
 
 async function setup() {
   try {
@@ -18,12 +17,12 @@ async function setup() {
         email VARCHAR(100) NOT NULL UNIQUE,
         role VARCHAR(20) DEFAULT '探湯者',
         review_count INTEGER DEFAULT 0,
-        picuture_count INTEGER DEFAULT 0,
+        picture_count INTEGER DEFAULT 0,
         discription_edit_count INTEGER DEFAULT 0,
         onsen_add_count INTEGER DEFAULT 0,
         contribution_score INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );`);
+      );`);
 
     // hot_springsテーブルの作成
     await pool.query(`
@@ -71,11 +70,11 @@ async function setup() {
         crowd BOOLEAN DEFAULT FALSE,
         normal BOOLEAN DEFAULT FALSE,
         no_crowd BOOLEAN DEFAULT FALSE,
-
         comment TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    
     // 初期データ挿入
     await pool.query(`
       INSERT INTO hot_springs (
@@ -108,13 +107,16 @@ async function setup() {
         (1, 3, 3.3, false, false, false, true, true, '普通でした。')
     `);
 
-    await pool.query(`
-      INSERT INTO users (
-        username, password, email
-    )
-        VALUES
-        ('test', 'test@gmail.com', 'test')
-        `);
+    const hashedPassword = await hashPassword('test');
+
+    // ハッシュ化されたパスワードをデータベースに挿入
+    await pool.query(
+      `
+      INSERT INTO users (username, email, password)
+      VALUES ($1, $2, $3)
+      `,
+      ['test', 'test@gmail.com', hashedPassword]
+    );
 
     console.log('PostgreSQLテーブル作成完了');
   } catch (error) {

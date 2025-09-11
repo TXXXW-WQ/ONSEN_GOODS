@@ -1,7 +1,8 @@
-const { use } = require('react');
 const db = require('../db/database'); // db/database.jsからデータベース接続を読み込む
 const { updateUserContribution } = require('./util/contribution'); // 貢献度更新関数をインポート
 const { checkLogin } = require('./authController');
+
+
 // 1. 全ての温泉情報を取得 (GET /api/onsen)
 exports.getAllOnsen = async (req, res) => {
   try {
