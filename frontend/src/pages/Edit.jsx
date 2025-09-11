@@ -111,7 +111,7 @@ function Edit({ login, setLogin }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <div
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentColdBath
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-300 text-gray-700'
                 }`}
@@ -135,7 +135,7 @@ function Edit({ login, setLogin }) {
           </div>
           <div>
             <div
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentRotenburo
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-300 text-gray-700'
                 }`}
@@ -147,7 +147,7 @@ function Edit({ login, setLogin }) {
           </div>
           <div>
             <div
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentOutdoor
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-300 text-gray-700'
                 }`}
@@ -159,7 +159,7 @@ function Edit({ login, setLogin }) {
           </div>
           <div>
             <div
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentBubbleBath
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-300 text-gray-700'
                 }`}
@@ -171,7 +171,7 @@ function Edit({ login, setLogin }) {
           </div>
           <div>
             <div
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentJetBath
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-300 text-gray-700'
                 }`}
@@ -183,7 +183,7 @@ function Edit({ login, setLogin }) {
           </div>
           <div>
             <div
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentShampoo
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-300 text-gray-700'
                 }`}
