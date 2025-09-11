@@ -136,11 +136,11 @@ exports.postGoodAndBad = async (req, res) => {
     for (const facility in updates) {
       if (updates.hasOwnProperty(facility)) {
         const ratingType = updates[facility];
-        if (ratingType === 'good' || ratingType === 'bad') {
+        if (ratingType === True || ratingType === False) {
           const goodColumnName = `${facility}_good`;
           const badColumnName = `${facility}_bad`;
 
-          if (ratingType === 'good') {
+          if (ratingType === True) {
             currentOnsen[goodColumnName]++;
           } else {
             currentOnsen[badColumnName]++;

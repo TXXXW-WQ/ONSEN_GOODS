@@ -11,7 +11,22 @@ function Edit({ login, setLogin }) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
 
-  const [coldBath, setColdBath] = useState(false);
+  /**
+   * 現在の設備情報
+   */
+  const [currentColdBath, setCurrentColdBath] = useState();
+  const [currentSauna, setCurrentSauna] = useState();
+  const [currentRotenburo, setCurrentRotenburo] = useState();
+  const [currentOutdoor, setCurrentOutdoor] = useState();
+  const [currentBubbleBath, setCurrentBubbleBath] = useState();
+  const [currentJetBath, setCurrentJetBath] = useState();
+  const [currentShampoo, setCurrentShampoo] = useState();
+
+
+  /**
+   * 送信される設備情報
+   */
+  const [coldBath, setColdBath] = useState();
   const [sauna, setSauna] = useState(false);
   const [rotenburo, setRotenburo] = useState(false);
   const [outdoor, setOutdoor] = useState(false);
@@ -20,11 +35,11 @@ function Edit({ login, setLogin }) {
   const [shampoo, setShampoo] = useState(false);
 
   useEffect(() => {
-      if (!login) {
-        navigate(ROUTES.LOGIN, { state: { fromEdit: true } });
-      }
-      // console.log("login確認できず");
-    }, [login]);
+    if (!login) {
+      navigate(ROUTES.LOGIN, { state: { fromEdit: true } });
+    }
+    // console.log("login確認できず");
+  }, [login]);
 
   useEffect(() => {
     const fetchOnsenDetail = async () => {
@@ -36,13 +51,13 @@ function Edit({ login, setLogin }) {
         }
         const data = await response.json();
         setOnsen(data);
-        setColdBath(data.cold_bath);
-        setSauna(data.sauna);
-        setRotenburo(data.rotenburo);
-        setOutdoor(data.outdoor);
-        setBubbleBath(data.bubble_bath);
-        setJetBath(data.jet_bath);
-        setShampoo(data.shampoo);
+        setCurrentColdBath(data.cold_bath);
+        setCurrentSauna(data.sauna);
+        setCurrentRotenburo(data.rotenburo);
+        setCurrentOutdoor(data.outdoor);
+        setCurrentBubbleBath(data.bubble_bath);
+        setCurrentJetBath(data.jet_bath);
+        setCurrentShampoo(data.shampoo);
       } catch (e) {
         setError(e);
         console.error(`温泉ID ${id} の詳細取得中にエラーが発生しました:`, e);
@@ -95,38 +110,90 @@ function Edit({ login, setLogin }) {
         {success && <div className="mb-4 text-green-600">設備情報を更新しました！</div>}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 font-semibold">設備</label>
-            <div className="grid grid-cols-2 gap-4">
-              <label className="flex items-center bg-blue-50 border border-blue-300 rounded px-3 py-2">
-                <input type="checkbox" checked={coldBath} onChange={e => setColdBath(e.target.checked)} />
-                <span className="ml-2 text-blue-700">水風呂</span>
-              </label>
-              <label className="flex items-center bg-yellow-50 border border-yellow-300 rounded px-3 py-2">
-                <input type="checkbox" checked={sauna} onChange={e => setSauna(e.target.checked)} />
-                <span className="ml-2 text-yellow-700">サウナ</span>
-              </label>
-              <label className="flex items-center bg-green-50 border border-green-300 rounded px-3 py-2">
-                <input type="checkbox" checked={rotenburo} onChange={e => setRotenburo(e.target.checked)} />
-                <span className="ml-2 text-green-700">露天風呂</span>
-              </label>
-              <label className="flex items-center bg-lime-50 border border-lime-300 rounded px-3 py-2">
-                <input type="checkbox" checked={outdoor} onChange={e => setOutdoor(e.target.checked)} />
-                <span className="ml-2 text-lime-700">屋外風呂</span>
-              </label>
-              <label className="flex items-center bg-cyan-50 border border-cyan-300 rounded px-3 py-2">
-                <input type="checkbox" checked={bubbleBath} onChange={e => setBubbleBath(e.target.checked)} />
-                <span className="ml-2 text-cyan-700">泡風呂</span>
-              </label>
-              <label className="flex items-center bg-indigo-50 border border-indigo-300 rounded px-3 py-2">
-                <input type="checkbox" checked={jetBath} onChange={e => setJetBath(e.target.checked)} />
-                <span className="ml-2 text-indigo-700">ジェットバス</span>
-              </label>
-              <label className="flex items-center bg-pink-50 border border-pink-300 rounded px-3 py-2">
-                <input type="checkbox" checked={shampoo} onChange={e => setShampoo(e.target.checked)} />
-                <span className="ml-2 text-pink-700">シャンプーあり</span>
-              </label>
+            <div
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700'
+                }`}
+            >
+              水風呂
             </div>
+            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setColdBath(e.target.value === 'あり')} />あり
+            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setColdBath(e.target.value === 'あり')} />なし
           </div>
+          <div>
+            <div
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700'
+                }`}
+            >
+              サウナ
+            </div>
+            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setSauna(e.target.value === 'あり')} />あり
+            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setSauna(e.target.value === 'あり')} />なし
+          </div>
+          <div>
+            <div
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700'
+                }`}
+            >
+              露天風呂
+            </div>
+            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setRotenburo(e.target.value === 'あり')} />あり
+            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setRotenburo(e.target.value === 'あり')} />なし
+          </div>
+          <div>
+            <div
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700'
+                }`}
+            >
+              外気浴
+            </div>
+            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setOutdoor(e.target.value === 'あり')} />あり
+            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setOutdoor(e.target.value === 'あり')} />なし
+          </div>
+          <div>
+            <div
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700'
+                }`}
+            >
+              泡風呂
+            </div>
+            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setBubbleBath(e.target.value === 'あり')} />あり
+            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setBubbleBath(e.target.value === 'あり')} />なし
+          </div>
+          <div>
+            <div
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700'
+                }`}
+            >
+              ジェットバス
+            </div>
+            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setJetBath(e.target.value === 'あり')} />あり
+            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setJetBath(e.target.value === 'あり')} />なし
+          </div>
+          <div>
+            <div
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-colors duration-200 ${currentSauna
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700'
+                }`}
+            >
+              シャンプー/ボディーソープ
+            </div>
+            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setShampoo(e.target.value === 'あり')} />あり
+            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setShampoo(e.target.value === 'あり')} />なし
+          </div>
+
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
