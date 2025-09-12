@@ -31,12 +31,12 @@ exports.login = async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM users WHERE email = $1',[email]);
     if (result.rows.length === 0) {
-      return res.status(401).josn({ message: 'メールアドレスまたはパスワードが違います。'});
+      return res.status(401).json({ message: 'メールアドレスまたはパスワードが違います。'});
     }
     const user = result.rows[0];
     const match = bcrypt.compareSync(password, user.password);
     if (!match) {
-      return res.stutus(401).json({ message: 'メールアドレスまたはパスワードが違います。'});
+      return res.status(401).json({ message: 'メールアドレスまたはパスワードが違います。'});
     }
 
     // JWTトークンの生成
@@ -53,6 +53,7 @@ exports.login = async (req, res) => {
     res.json({ message: 'ログイン成功'})
   } catch (error) {
     res.status(500).json({ error: 'ログインエラー'});
+    console.error('ログインエラー:', error);
   }
 };
 
