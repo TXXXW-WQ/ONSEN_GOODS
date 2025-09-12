@@ -1,5 +1,5 @@
 const db = require('../db/database'); // db/database.jsからデータベース接続を読み込む
-const { updateUserContribution } = require('./util/contribution'); // 貢献度更新関数をインポート
+const { updateUserContribution } = require('./util/upContribution'); // 貢献度更新関数をインポート
 const { checkLogin } = require('./authController');
 
 
