@@ -126,32 +126,9 @@ function OnsenDetail() {
             </tbody>
           </table>
         </div>
-        
+        <Link to={ROUTES.EDIT.replace(':id', id)} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備情報を投稿する</Link>
         <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
       </div>
-
-      {/* 評価一覧 */}
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4 text-blue-800">ユーザーの評価・コメント</h2>
-        {ratingsLoading ? (
-          <div>評価を読み込み中...</div>
-        ) : ratings.length === 0 ? (
-          <div className="text-gray-500">まだ評価がありません。</div>
-        ) : (
-          <ul className="space-y-4">
-            {ratings.map((r, i) => (
-              <li key={r.id || i} className="border rounded-lg p-4 shadow-sm bg-gray-50">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-yellow-600">{r.rating_value ? `★ ${Number(r.rating_value).toFixed(1)} / 5.0` : ''}</span>
-                  <span className="text-xs text-gray-400 ml-2">匿名・{new Date(r.created_at).toLocaleDateString()}</span>
-                </div>
-                <div className="text-gray-800">{r.comment}</div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
       <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
 
         <Link
@@ -166,6 +143,30 @@ function OnsenDetail() {
         >
           📝 この温泉を評価する →
         </Link>
+      </div>
+
+      {/* 評価一覧 */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold mb-4 text-blue-800">ユーザーの評価・コメント</h2>
+        {ratingsLoading ? (
+          <div>評価を読み込み中...</div>
+        ) : ratings.length === 0 ? (
+          <div className="text-gray-500">まだ評価がありません。</div>
+        ) : (
+          <ul className="space-y-4">
+            {ratings.map((r, i) => (
+              r.comment && (
+                <li key={r.id || i} className="border rounded-lg p-4 shadow-sm bg-gray-50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-yellow-600">{r.rating_value ? `★ ${Number(r.rating_value).toFixed(1)} / 5.0` : ''}</span>
+                    <span className="text-xs text-gray-400 ml-2">{r.username || '匿名'}・{new Date(r.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="text-gray-800">{r.comment}</div>
+                </li>
+              )
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   )

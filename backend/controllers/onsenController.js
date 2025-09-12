@@ -1,4 +1,7 @@
 const db = require('../db/database'); // db/database.jsからデータベース接続を読み込む
+const { updateUserContribution } = require('./util/upContribution'); // 貢献度更新関数をインポート
+const { checkLogin } = require('./authController');
+
 
 // 1. 全ての温泉情報を取得 (GET /api/onsen)
 exports.getAllOnsen = async (req, res) => {
@@ -176,21 +179,10 @@ exports.getRatingByOnsenId = async (req, res) => {
 // ユーザーから評価とコメントを受け取り、ratingsテーブルの保存、hot_springsテーブルの平均評価を更新。
 exports.postRating = async (req, res) => {
   const onsenId = req.params.id; // URLパラメータから温泉IDを取得
-  // 設備情報も受け取る
-  const {
-    userId = 1,
-    rating,
-    comment,
-    cold_bath,
-    sauna,
-    rotenburo,
-    outdoor,
-    bubble_bath,
-    jet_bath,
-    shampoo
-  } = req.body; // リクエストボディから評価・コメント・設備を取得
+  const userId = req.user.id;
+  const {rating, comment} = req.body // リクエストボディから評価とコメントを取得
 
-  // 
+  
   if (typeof rating !== 'number' || rating < 1 || rating > 5) {
     return res.status(400).json({
       error: '評価の値が無効です。',
@@ -230,6 +222,9 @@ exports.postRating = async (req, res) => {
       ]
     );
 
+    // ユーザーのレビュー数と貢献度を増やす
+    await updateUserContribution(client, userId, 'review_count');
+
     // 平均の評価を再計算して更新
     await client.query(`
       UPDATE hot_springs
@@ -250,5 +245,129 @@ exports.postRating = async (req, res) => {
   } finally {
     client.release();
   }
+}
+
+// 各情報の評価(good/bad)をpostするapi
+// dbはpg.Poolインスタンスとして定義されていると仮定
+exports.postGoodAndBad = async (req, res) => {
+  const onsenId = req.params.id;
+  const updates = req.body;
+
+  let client;
+  try {
+    //  クライアントを接続し、トランザクションを開始
+    client = await db.connect();
+    await client.query('BEGIN');
+
+    // FOR UPDATE を使用して行をロック
+    const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1 FOR UPDATE', [onsenId]);
+    if (onsenResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: '評価対象の温泉が見つかりません。' });
+    }
+    const currentOnsen = onsenResult.rows[0];
+
+    const updateFields = [];
+    const updateValues = [];
+
+    // good/bad値を計算
+    for (const facility in updates) {
+      if (updates.hasOwnProperty(facility)) {
+        const ratingType = updates[facility];
+        if (ratingType === True || ratingType === False) {
+          const goodColumnName = `${facility}_good`;
+          const badColumnName = `${facility}_bad`;
+
+          if (ratingType === True) {
+            currentOnsen[goodColumnName]++;
+          } else {
+            currentOnsen[badColumnName]++;
+          }
+
+          const newFacilityValue = currentOnsen[goodColumnName] > currentOnsen[badColumnName];
+
+          updateFields.push(`${goodColumnName} = $${updateValues.length + 1}`);
+          updateValues.push(currentOnsen[goodColumnName]);
+          updateFields.push(`${badColumnName} = $${updateValues.length + 1}`);
+          updateValues.push(currentOnsen[badColumnName]);
+          updateFields.push(`${facility} = $${updateValues.length + 1}`);
+          updateValues.push(newFacilityValue);
+        }
+      }
+    }
+
+    if (updateFields.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: '有効な評価データがありません。' });
+    }
+
+    // 値を更新
+    const query = `
+      UPDATE hot_springs
+      SET ${updateFields.join(', ')}
+      WHERE id = $${updateValues.length + 1}
+      RETURNING *;
+    `;
+    updateValues.push(onsenId);
+
+    const result = await client.query(query, updateValues);
+    
+    // 5. トランザクションをコミット
+    await client.query('COMMIT');
+    
+    res.status(200).json({
+      message: '施設評価が更新されました',
+      onsen: result.rows[0],
+    });
+
+  } catch (err) {
+    // エラー時はトランザクションをロールバック
+    if (client) {
+      await client.query('ROLLBACK');
+    }
+    console.error('Good/Bad評価エラー:', err.message);
+    res.status(500).json({ error: 'Good/Bad評価の更新中にエラーが発生しました。' });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
 };
 
+// 温泉を追加するAPI
+// 温泉名、所在地、説明、画像urlが飛んでくる予定
+// Home,もしくはHomeから飛べる専用ページから呼ばれる
+exports.addOnsenName = async (req, res) => {
+  
+  const userId = req.body.userId
+  const name = req.body.name;
+  const location = req.body.location || null;
+  const description = req.body.description || '';
+  const imageUrl = req.body.imageUrl || null;
+
+  // ユーザーの権限の確認
+  const userRole = await db.query(`SELECT role FROM users WHERE id = $1`, [userId]);
+  if (userRole.rows.length === 0 || userRole.rows[0].role === '探湯者' || userRole.rows[0].role === '温泉家') {
+    return res.status(403).json({ error: '温泉追加の権限がありません。' });
+  }
+
+  // 入力された温泉名の確認
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return res.status(400).json({ error: '有効な温泉名を提供してください。' });
+  }
+
+  try {
+    
+    // 温泉の追加実行
+    const result = await db.query(`
+      INSERT INTO hot_springs (
+      name, location, description, created_at
+      ) VALUES ($1, $2, $3, NOW())
+      RETURNING *;
+    `, [name.trim(), location, description, imageUrl]);
+    
+    res.status(201).json({ message: '温泉が正常に追加されました。', onsen: result.rows[0] });
+  } catch (err) {
+    console.error('温泉追加エラー:', err.message);  
+  }
+}
