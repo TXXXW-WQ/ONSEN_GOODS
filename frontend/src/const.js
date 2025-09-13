@@ -7,5 +7,5 @@ export const ROUTES = {
   REGISTER: "/register",
   ONSEN_DETAIL: '/onsen/:id',
   REVIEW: "/onsen/:id/review",
-  // EDIT: "/onsen/:id/edit"
+  EDIT: "/onsen/:id/edit"
 }

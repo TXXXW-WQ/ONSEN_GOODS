@@ -6,6 +6,7 @@ import Register from './pages/Register'
 import OnsenDetail from './pages/OnsenDetail'
 import Review from './pages/Review'
 import { ROUTES } from './const'
+import Edit from './pages/Edit'
 
 
 // ページが見つからないとき
@@ -117,6 +118,7 @@ function App() {
         <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
         <Route path={ROUTES.REVIEW} element={<Review login={login} setLogin={setLogin}/>} />
+        <Route path={ROUTES.EDIT} element={<Edit login={login} setLogin={setLogin}/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
