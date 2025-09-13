@@ -33,6 +33,17 @@ function OnsenDetail() {
     fetchOnsenDetail();
   }, [id]);
 
+  // 取得した設備情報をマッピング
+  const facilityItems = [
+    { key: 'cold_bath', label: '水風呂' },
+    { key: 'sauna', label: 'サウナ' },
+    { key: 'rotenburo', label: '露天風呂' },
+    { key: 'outdoor', label: '外気浴' },
+    { key: 'bubble_bath', label: '泡風呂' },
+    { key: 'jet_bath', label: 'ジェットバス' },
+    { key: 'shampoo', label: 'シャンプー・ボディソープ' },
+  ]
+
   // 評価一覧の取得
   useEffect(() => {
     const fetchRatings = async () => {
@@ -89,42 +100,26 @@ function OnsenDetail() {
 
       <div className="space-y-4 text-gray-800 text-lg">
         <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
-        <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 'N/A'} / 5.0</p>
+        <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 0.00} / 5.00</p>
         <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
-        {/* 設備のあり/なし率を縦並びで表示 */}
-        <div className="mt-6">
-          <h3 className="text-lg font-bold mb-2">設備のユーザー投票</h3>
-          <table className="w-full text-center border border-gray-300 rounded-lg">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="py-2 px-2">設備</th>
-                <th className="py-2 px-2 text-green-700">あり</th>
-                <th className="py-2 px-2 text-red-700">なし</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { key: 'cold_bath', label: '水風呂' },
-                { key: 'sauna', label: 'サウナ' },
-                { key: 'rotenburo', label: '露天風呂' },
-                { key: 'outdoor', label: 'アウトドア' },
-                { key: 'bubble_bath', label: 'バブルバス' },
-                { key: 'jet_bath', label: 'ジェットバス' },
-                { key: 'shampoo', label: 'シャンプー' },
-              ].map(facility => {
-                const rate = onsen.facilityRates?.[facility.key];
-                const percent = rate && rate.totalCount > 0 ? rate.percent : 0;
-                const nonePercent = rate && rate.totalCount > 0 ? Math.round((1 - (rate.trueCount / rate.totalCount)) * 1000) / 10 : 0;
-                return (
-                  <tr key={facility.key} className="border-t">
-                    <td className="py-2 px-2 font-semibold text-left">{facility.label}</td>
-                    <td className="py-2 px-2 text-green-700">{percent}%</td>
-                    <td className="py-2 px-2 text-red-700">{nonePercent}%</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div>
+          <h3 className="text-xl font-bold mb-2">設備情報</h3>
+          <div className="flex flex-wrap gap-2">
+            {facilityItems.map(item => (
+              <div
+                key={item.key}
+                className={`
+                  px-3 py-1 rounded-full border 
+                  ${onsen[item.key]
+                    ? 'bg-green-100 border-green-500 text-green-700'
+                    : 'bg-gray-100 border-gray-300 text-gray-500'
+                  }
+                `}
+              >
+                {item.label}
+              </div>
+            ))}
+          </div>
         </div>
         <Link to={ROUTES.EDIT.replace(':id', id)} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備情報を投稿する</Link>
         <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
