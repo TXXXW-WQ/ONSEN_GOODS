@@ -204,21 +204,13 @@ exports.postRating = async (req, res) => {
     // 評価＋設備を挿入
     await client.query(
       `INSERT INTO ratings (
-        hot_spring_id, user_id, rating, comment,
-        cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+        hot_spring_id, user_id, rating, comment
+      ) VALUES ($1, $2, $3, $4)`,
       [
         onsenId,
         userId,
         rating,
-        comment,
-        cold_bath,
-        sauna,
-        rotenburo,
-        outdoor,
-        bubble_bath,
-        jet_bath,
-        shampoo
+        comment
       ]
     );
 
@@ -248,7 +240,6 @@ exports.postRating = async (req, res) => {
 }
 
 // 各情報の評価(good/bad)をpostするapi
-// dbはpg.Poolインスタンスとして定義されていると仮定
 exports.postGoodAndBad = async (req, res) => {
   const onsenId = req.params.id;
   const updates = req.body;
@@ -274,11 +265,11 @@ exports.postGoodAndBad = async (req, res) => {
     for (const facility in updates) {
       if (updates.hasOwnProperty(facility)) {
         const ratingType = updates[facility];
-        if (ratingType === True || ratingType === False) {
+        if (ratingType === true || ratingType === false) {
           const goodColumnName = `${facility}_good`;
           const badColumnName = `${facility}_bad`;
 
-          if (ratingType === True) {
+          if (ratingType === true) {
             currentOnsen[goodColumnName]++;
           } else {
             currentOnsen[badColumnName]++;
