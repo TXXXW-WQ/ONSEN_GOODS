@@ -11,6 +11,9 @@ router.post('/login', authController.login);
 // ログイン中のユーザー情報を取得するエンドポイント
 router.get('/me', authenticateJWT, authController.checkLogin);
 
+// ログアウトエンドポイント
+router.post('/logout', authenticateJWT, authController.logout);
+
 // すべての温泉情報を取得するAPIエンドポイント
 // GET /api/onsen
 router.get('/', onsenController.getAllOnsen);

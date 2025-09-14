@@ -61,3 +61,9 @@ exports.login = async (req, res) => {
 exports.checkLogin = (req, res) => {
   res.json({ user: req.user });
 }
+
+// ログアウト
+exports.logout = (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'ログアウトしました。' });
+}

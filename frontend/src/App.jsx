@@ -46,10 +46,14 @@ function App() {
     checkLogin();
   }, []);
 
-  const handleLogout = () => {
-
-    setLogin(false); // ログイン状態を更新
-    window.location.reload(); // ページをリロードしてログアウト状態を反映
+  const handleLogout = async () => {
+    const result =  await fetch('http://localhost:3000/api/onsen/logout', {
+      method: 'POST',
+      credentials: 'include'
+    })
+    if (result.ok) {
+      setLogin(false);
+    }
   }
 
   return (
