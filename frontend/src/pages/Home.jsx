@@ -26,7 +26,7 @@ function Home() {
       }
     };
     fetchOnsenList();
-  }, []); //からの依存配列は、コンポーネントがマウントされたときに一度だけ実行されることを意味する。
+  }, []); //空の依存配列は、コンポーネントがマウントされたときに一度だけ実行されることを意味する。
 
   if (loading) {
     return <div>読み込み中...</div>
@@ -52,6 +52,12 @@ function Home() {
           onChange={(e) => setSearch(e.target.value)}
           className="border border-gray-300 rounded-lg p-2 w-full"
         />
+      </div>
+    
+      <div>
+        <Link to={ROUTES.AddOnsen} className="inline-block mt-4 mb-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300">
+          温泉を追加する
+        </Link>
       </div>
       {filteredOnsenList.length === 0 ? (
         <p className="text-center text-gray-600 text-lg py-10">登録されている温泉はまだありません。</p>

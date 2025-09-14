@@ -27,7 +27,7 @@ exports.getOnsenById = async (req, res) => {
 
     // 温泉情報にfacilityRatesを追加して返す
     const onsen = result.rows[0];
-  
+
     // 最新の平均評価を計算して反映
     await db.query(`
       UPDATE hot_springs
@@ -65,9 +65,9 @@ exports.getRatingByOnsenId = async (req, res) => {
 exports.postRating = async (req, res) => {
   const onsenId = req.params.id; // URLパラメータから温泉IDを取得
   const userId = req.user.id;
-  const {rating, comment} = req.body // リクエストボディから評価とコメントを取得
+  const { rating, comment } = req.body // リクエストボディから評価とコメントを取得
 
-  
+
   if (typeof rating !== 'number' || rating < 1 || rating > 5) {
     return res.status(400).json({
       error: '評価の値が無効です。',
@@ -187,10 +187,10 @@ exports.postGoodAndBad = async (req, res) => {
     updateValues.push(onsenId);
 
     const result = await client.query(query, updateValues);
-    
+
     // 5. トランザクションをコミット
     await client.query('COMMIT');
-    
+
     res.status(200).json({
       message: '施設評価が更新されました',
       onsen: result.rows[0],
@@ -214,36 +214,39 @@ exports.postGoodAndBad = async (req, res) => {
 // 温泉名、所在地、説明、画像urlが飛んでくる予定
 // Home,もしくはHomeから飛べる専用ページから呼ばれる
 exports.addOnsenName = async (req, res) => {
-  
+
   const userId = req.body.userId
-  const name = req.body.name;
+  const onsenName = req.body.onsenName;
   const location = req.body.location || null;
   const description = req.body.description || '';
   const imageUrl = req.body.imageUrl || null;
 
-  // ユーザーの権限の確認
-  const userRole = await db.query(`SELECT role FROM users WHERE id = $1`, [userId]);
-  if (userRole.rows.length === 0 || userRole.rows[0].role === '探湯者' || userRole.rows[0].role === '温泉家') {
-    return res.status(403).json({ error: '温泉追加の権限がありません。' });
+  const userResult = await db.query(`SELECT role FROM users WHERE id = $1`, [userId]);
+
+  // ユーザーが存在しない場合、またはロールが「探湯者」か「温泉家」の場合
+  if (userResult.rows.length === 0 || userResult.rows[0].role === '探湯者' || userResult.rows[0].role === '温泉家') {
+    const userRole = userResult.rows.length > 0 ? userResult.rows[0].role : '未登録ユーザー';
+    console.log('温泉追加権限なし:', userRole);
+    return res.status(403).json({ error: '温泉追加の権限がありません。'});
   }
 
   // 入力された温泉名の確認
-  if (!name || typeof name !== 'string' || name.trim() === '') {
+  if (!onsenName || typeof onsenName !== 'string' || onsenName.trim() === '') {
     return res.status(400).json({ error: '有効な温泉名を提供してください。' });
   }
 
   try {
-    
+
     // 温泉の追加実行
     const result = await db.query(`
       INSERT INTO hot_springs (
-      name, location, description, created_at
-      ) VALUES ($1, $2, $3, NOW())
+      name, location, description, image_url, created_at
+      ) VALUES ($1, $2, $3, $4, NOW())
       RETURNING *;
-    `, [name.trim(), location, description, imageUrl]);
-    
+    `, [onsenName.trim(), location, description, imageUrl]);
+
     res.status(201).json({ message: '温泉が正常に追加されました。', onsen: result.rows[0] });
   } catch (err) {
-    console.error('温泉追加エラー:', err.message);  
+    console.error('温泉追加エラー:', err.message);
   }
 }

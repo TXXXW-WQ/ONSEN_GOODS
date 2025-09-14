@@ -7,6 +7,7 @@ import OnsenDetail from './pages/OnsenDetail'
 import Review from './pages/Review'
 import { ROUTES } from './const'
 import Edit from './pages/Edit'
+import AddOnsen from './pages/AddOnsen'
 
 
 // ページが見つからないとき
@@ -29,7 +30,7 @@ function App() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-      const result = fetch('http://localhost:3000/api/onsen/me', {
+      const result = await fetch('http://localhost:3000/api/onsen/me', {
         credentials: 'include'
       })
         if (result.ok) {
@@ -117,6 +118,7 @@ function App() {
         <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail />} />
         <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
+        <Route path={ROUTES.AddOnsen} element={<AddOnsen login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.REVIEW} element={<Review login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.EDIT} element={<Edit login={login} setLogin={setLogin}/>} />
         <Route path="*" element={<NotFoundPage />} />
