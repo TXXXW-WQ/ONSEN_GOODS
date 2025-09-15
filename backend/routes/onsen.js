@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const onsenController = require('../controllers/onsenController');
 const authController = require('../controllers/authController');
+const editOnsenName = require('../controllers/editOnsenName');
 const authenticateJWT = require('../middleware/auth'); // JWT認証ミドルウェアを読み込む
 
 // 認証・認可
@@ -35,7 +36,8 @@ router.post('/add', authenticateJWT, onsenController.addOnsenName);
 // 温泉の各情報(現在は施設情報のみ)に対するgood/badの数を更新する
 router.post('/:id/facilities', authenticateJWT, onsenController.postGoodAndBad)
 
-
+// 温泉の名前を編集するAPIエンドポイント
+router.put('/:id/nameedit', authenticateJWT, editOnsenName.editOnsenName);
 
 
 module.exports = router;
