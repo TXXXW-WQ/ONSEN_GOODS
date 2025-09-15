@@ -119,7 +119,7 @@ function App() {
       {/* ルートを定義 */}
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
-        <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail />} />
+        <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail login={login}/>} />
         <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
         <Route path={ROUTES.AddOnsen} element={<AddOnsen login={login} setLogin={setLogin}/>} />

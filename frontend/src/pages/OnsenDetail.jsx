@@ -1,12 +1,36 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ROUTES } from '../const'
+import EditOnsenName from './EditOnsenName';
 
-function OnsenDetail() {
+function OnsenDetail({ login }) {
   const { id } = useParams();
   const [onsen, setOnsen] = useState(null); // 特定の温泉データを保持する
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  /**
+     * ログイン中のユーザー情報を取得
+     */
+  const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const result = await fetch('http://localhost:3000/api/onsen/me', {
+          credentials: 'include'
+        })
+        if (result.ok) {
+          const data = await result.json();
+          setUserId(data.user.id);
+          setUserRole(data.user.role);
+        }
+      } catch (e) {
+        console.error('ユーザー情報の取得中にエラーが発生しました:', e);
+      }
+    }
+    fetchUser();
+  }, [login]);
 
   // 評価一覧のstate
   const [ratings, setRatings] = useState([]);
@@ -66,6 +90,24 @@ function OnsenDetail() {
     fetchRatings();
   }, [id]);
 
+  const [isEditNameOpen, setIsEditNameOpen] = useState(false);
+  const [authError, setAuthError] = useState(null);
+
+  // 温泉名編集ボタンクリック時の処理
+  const handleNameEditClick = () => {
+    console.log(userRole)
+    if (!(userRole === '温泉マイスター' || userRole === '名湯案内人')) {
+      setAuthError('温泉名を編集する権限がありません。');
+      return;
+    }
+    setAuthError(null); // 既存のエラーメッセージをクリア
+    setIsEditNameOpen(true);
+  }
+  // モーダルを閉じるためのコールバック関数
+  const ModalClose = () => {
+    setIsEditNameOpen(false);
+  }
+
   if (loading) {
     return <div>読み込み中...</div>
   }
@@ -85,15 +127,38 @@ function OnsenDetail() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white shadow-xl rounded-xl mt-8 mb-8">
-      <h1 className="text-4xl font-extrabold text-blue-700 mb-6 text-center">{onsen.name}</h1>
+      {/* 💡 温泉名、編集ボタン、エラーメッセージを中央揃えに */}
+      <div className="flex flex-col items-center mb-6">
+        <h1 className="text-4xl font-extrabold text-blue-700">{onsen.name}</h1>
+        {/* 💡 ボタンとエラーメッセージのコンテナを修正 */}
+        <div className="mt-4 flex flex-col items-center">
+          <button
+            onClick={handleNameEditClick}
+            className="px-6 py-3 text-base bg-gray-200 rounded hover:bg-gray-300 transition"
+          >
+            編集
+          </button>
+          {authError && (
+            <p className="text-red-500 text-xs mt-1">{authError}</p>
+          )}
+        </div>
+      </div>
 
+      {isEditNameOpen && (
+        <EditOnsenName
+          onsenName={onsen.name}
+          id={id}
+          onUpdate={handleNameUpdate}
+          onClose={ModalClose}
+        />
+      )}
       {onsen.image_url && (
         <div className="mb-6 text-center">
           <img
             src={onsen.image_url}
             alt={onsen.name}
             className="w-full h-64 object-cover rounded-lg shadow-md border border-gray-200 mx-auto"
-            style={{ maxWidth: '600px' }} // 画像の最大幅を調整
+            style={{ maxWidth: '600px' }}
           />
         </div>
       )}
@@ -109,12 +174,12 @@ function OnsenDetail() {
               <div
                 key={item.key}
                 className={`
-                  px-3 py-1 rounded-full border 
-                  ${onsen[item.key]
+                  px-3 py-1 rounded-full border 
+                  ${onsen[item.key]
                     ? 'bg-green-100 border-green-500 text-green-700'
                     : 'bg-gray-100 border-gray-300 text-gray-500'
                   }
-                `}
+                `}
               >
                 {item.label}
               </div>
@@ -125,7 +190,6 @@ function OnsenDetail() {
         <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
       </div>
       <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-
         <Link
           to={ROUTES.HOME}
           className="inline-block px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
@@ -139,8 +203,6 @@ function OnsenDetail() {
           📝 この温泉を評価する →
         </Link>
       </div>
-
-      {/* 評価一覧 */}
       <div className="mt-10">
         <h2 className="text-2xl font-bold mb-4 text-blue-800">ユーザーの評価・コメント</h2>
         {ratingsLoading ? (

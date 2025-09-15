@@ -8,6 +8,9 @@ import { ROUTES } from '../const';
  */
 function AddOnsen({ login }) {
 
+  /**
+   * ログイン中のユーザー情報を取得
+   */
   const [userId, setUserId] = useState(null);
   useEffect(() => {
     const fetchUser = async () => {
