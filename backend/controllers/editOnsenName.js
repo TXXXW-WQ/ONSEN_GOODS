@@ -1,5 +1,4 @@
-const db = require('../db/database'); // db/database.jsからデータベース接続を読み込む
-const { updateUserContribution } = require('./util/upContribution'); // 貢献度更新関数をインポート
+const db = require('../db/database'); 
 
 /**
  * 温泉の名前を編集するコントローラー
@@ -13,7 +12,6 @@ exports.editOnsenName = async (req, res) => {
   const { id } = req.params; // URLパスから温泉IDを取得
   const { newName } = req.body;
   const userId = req.user.id; 
-  const userRole = req.user.role;
 
   if (!newName || newName.trim() === ""){
     return res.status(400).json({ message: '新しい名前は必須です。' });
@@ -36,11 +34,6 @@ exports.editOnsenName = async (req, res) => {
       return res.status(409).json({ message: 'その名前は既に使用されています。' });
     }
 
-    // 3. ユーザーの権限確認
-    if (!(userRole === '温泉マイスター' || userRole === '名湯案内人')) {
-      await client.query('ROLLBACK');
-      return res.status(403).json({ message: '名前を変更する権限がありません。' });
-    }
 
     // 4. 名前の更新
     await client.query(`

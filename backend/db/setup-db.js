@@ -125,10 +125,10 @@ async function setup() {
     // ハッシュ化されたパスワードをデータベースに挿入
     await pool.query(
       `
-      INSERT INTO users (username, email, password, role)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO users (username, email, password, role, contribution_score)
+      VALUES ($1, $2, $3, $4, $5)
       `,
-      ['test', 'test@gmail.com', hashedPassword, '温泉マイスター']
+      ['test', 'test@gmail.com', hashedPassword, '温泉マイスター', 150]
     );
 
     console.log('PostgreSQLテーブル作成完了');

@@ -7,7 +7,7 @@ function EditOnsenName({ onsenName, id, ModalClose }) {
   const [success, setSuccess] = React.useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // イベントのデフォルト動作をキャンセル
+    e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -31,11 +31,15 @@ function EditOnsenName({ onsenName, id, ModalClose }) {
       }
 
       setSuccess(true);
+      
     } catch (e) {
       setError(e);
       console.error("温泉名の更新中にエラーが発生しました:", e);
     } finally {
       setLoading(false);
+      setTimeout(() => {
+        ModalClose();
+      },2000);
     }
   };
 

@@ -3,7 +3,9 @@ const router = express.Router();
 const onsenController = require('../controllers/onsenController');
 const authController = require('../controllers/authController');
 const editOnsenName = require('../controllers/editOnsenName');
+const userRoleCheck = require('../controllers/userRoleCheck');
 const authenticateJWT = require('../middleware/auth'); // JWT認証ミドルウェアを読み込む
+
 
 // 認証・認可
 router.post('/register', authController.register);
@@ -14,6 +16,9 @@ router.get('/me', authenticateJWT, authController.checkLogin);
 
 // ログアウトエンドポイント
 router.post('/logout', authenticateJWT, authController.logout);
+
+// ユーザー権限を検証するエンドポイント
+router.post('/userrolecheck', authenticateJWT, userRoleCheck.userRoleCheck)
 
 // すべての温泉情報を取得するAPIエンドポイント
 // GET /api/onsen

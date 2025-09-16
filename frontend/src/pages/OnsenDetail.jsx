@@ -3,34 +3,14 @@ import { Link, useParams } from 'react-router-dom'
 import { ROUTES } from '../const'
 import EditOnsenName from './EditOnsenName';
 
-function OnsenDetail({ login }) {
+function OnsenDetail({ login, userId }) {
   const { id } = useParams();
   const [onsen, setOnsen] = useState(null); // 特定の温泉データを保持する
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditNameOpen, setIsEditNameOpen] = useState(false);
+  const [authError, setAuthError] = useState(null);
 
-  /**
-     * ログイン中のユーザー情報を取得
-     */
-  const [userId, setUserId] = useState(null);
-  const [userRole, setUserRole] = useState(null);
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const result = await fetch('http://localhost:3000/api/onsen/me', {
-          credentials: 'include'
-        })
-        if (result.ok) {
-          const data = await result.json();
-          setUserId(data.user.id);
-          setUserRole(data.user.role);
-        }
-      } catch (e) {
-        console.error('ユーザー情報の取得中にエラーが発生しました:', e);
-      }
-    }
-    fetchUser();
-  }, [login]);
 
   // 評価一覧のstate
   const [ratings, setRatings] = useState([]);
@@ -41,7 +21,7 @@ function OnsenDetail({ login }) {
       try {
         const response = await fetch(`http://localhost:3000/api/onsen/${id}`)
         if (!response.ok) {
-          const errorText = await response.text(); // エラーレスポンスのテキストも取得
+          const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
         }
 
@@ -55,7 +35,7 @@ function OnsenDetail({ login }) {
       }
     };
     fetchOnsenDetail();
-  }, [id]);
+  }, [id, isEditNameOpen]);
 
   // 取得した設備情報をマッピング
   const facilityItems = [
@@ -81,7 +61,7 @@ function OnsenDetail({ login }) {
         const data = await response.json();
         setRatings(data);
       } catch (e) {
-        setRatingsError(e);
+
         console.error(`温泉ID ${id} の評価取得中にエラーが発生しました:`, e);
       } finally {
         setRatingsLoading(false);
@@ -90,19 +70,39 @@ function OnsenDetail({ login }) {
     fetchRatings();
   }, [id]);
 
-  const [isEditNameOpen, setIsEditNameOpen] = useState(false);
-  const [authError, setAuthError] = useState(null);
 
+  const [contribution, setContribution] = useState(50)
   // 温泉名編集ボタンクリック時の処理
-  const handleNameEditClick = () => {
-    console.log(userRole)
-    if (!(userRole === '温泉マイスター' || userRole === '名湯案内人')) {
-      setAuthError('温泉名を編集する権限がありません。');
-      return;
+  const handleNameEditClick = async () => {
+    try {
+      if (!login) {
+        setAuthError('ユーザーログインが必要です。');
+        setIsEditNameOpen(false);
+        return
+      }
+      // 編集に必要なユーザーの貢献度(role)
+      
+      const result = await fetch(`http://localhost:3000/api/onsen/userrolecheck`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          userId,
+          contribution,
+        }),
+      });
+      if (result.ok) {
+        setAuthError(null); // 既存のエラーメッセージをクリア
+        setIsEditNameOpen(true);
+      }
+    } catch (e) {
+      setAuthError('ユーザーの権限認証に失敗しました。');
+      console.error('ユーザーの権限認証に失敗しました。');
     }
-    setAuthError(null); // 既存のエラーメッセージをクリア
-    setIsEditNameOpen(true);
   }
+
   // モーダルを閉じるためのコールバック関数
   const ModalClose = () => {
     setIsEditNameOpen(false);
@@ -127,10 +127,9 @@ function OnsenDetail({ login }) {
 
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white shadow-xl rounded-xl mt-8 mb-8">
-      {/* 💡 温泉名、編集ボタン、エラーメッセージを中央揃えに */}
+
       <div className="flex flex-col items-center mb-6">
         <h1 className="text-4xl font-extrabold text-blue-700">{onsen.name}</h1>
-        {/* 💡 ボタンとエラーメッセージのコンテナを修正 */}
         <div className="mt-4 flex flex-col items-center">
           <button
             onClick={handleNameEditClick}
@@ -148,8 +147,7 @@ function OnsenDetail({ login }) {
         <EditOnsenName
           onsenName={onsen.name}
           id={id}
-          onUpdate={handleNameUpdate}
-          onClose={ModalClose}
+          ModalClose={ModalClose()}
         />
       )}
       {onsen.image_url && (
