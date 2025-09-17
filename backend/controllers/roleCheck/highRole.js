@@ -1,16 +1,17 @@
-const db = require('../db/database');
+const db = require('../../db/database');
 
 /**
  * ユーザーの権限の検証を行うコントローラー
  * @route POST /api/onsen/:id/userrolecheck
  * @param {object} req.user - 認証済みユーザー情報 (JWTから取得)
- * @param {string} req.body.contriburion - 必要な貢献度
+ * @param {int} contriburion - 必要な貢献度
  */
 
-exports.userRoleCheck = async (req, res) => {
+exports.highRole = async (req, res) => {
   const  userId  = req.user.id;
-  const contribution = req.body.contribution;
 
+  const contriburion = 100;
+  
   try {
     const userResult = await db.query(`
       SELECT contribution_score FROM users WHERE id = $1
