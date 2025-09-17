@@ -198,7 +198,7 @@ function OnsenDetail({ login, userId }) {
           to={ROUTES.REVIEW.replace(':id', id)}
           className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
         >
-          📝 この温泉を評価する →
+        この温泉を評価する →
         </Link>
       </div>
       <div className="mt-10">

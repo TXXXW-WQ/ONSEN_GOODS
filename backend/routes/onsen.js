@@ -4,6 +4,7 @@ const onsenController = require('../controllers/onsenController');
 const authController = require('../controllers/authController');
 const editOnsenName = require('../controllers/editOnsenName');
 const userRoleCheck = require('../controllers/userRoleCheck');
+const addOnsenName = require('../controllers/addOnsenName');
 const authenticateJWT = require('../middleware/auth'); // JWT認証ミドルウェアを読み込む
 
 
@@ -36,7 +37,7 @@ router.get('/:id/rating', onsenController.getRatingByOnsenId);
 router.post('/:id/rating', authenticateJWT,onsenController.postRating);
 
 // 新しい温泉を追加するAPIエンドポイント
-router.post('/add', authenticateJWT, onsenController.addOnsenName);
+router.post('/add', authenticateJWT, addOnsenName.addOnsenName);
 
 // 温泉の各情報(現在は施設情報のみ)に対するgood/badの数を更新する
 router.post('/:id/facilities', authenticateJWT, onsenController.postGoodAndBad)

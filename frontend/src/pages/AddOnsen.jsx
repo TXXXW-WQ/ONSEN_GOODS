@@ -63,6 +63,7 @@ function AddOnsen({ login }) {
     setError(null);
     setSuccess(false);
     try {
+      const checkRole = await fetch('')
       const response = await fetch('http://localhost:3000/api/onsen/add', {
         method: 'POST',
         headers: {
@@ -87,6 +88,9 @@ function AddOnsen({ login }) {
       setLocation('');
       setDescription('');
 
+      setTimeout(() => {
+        navigate(ROUTES.HOME);
+      }, 2000);
     } catch (e) {
       setError(e);
       console.error('温泉追加中にエラーが発生しました:', e);
