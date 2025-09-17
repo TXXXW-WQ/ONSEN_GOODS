@@ -46,7 +46,7 @@ function EditOnsenName({ onsenName, id, ModalClose }) {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-50">
       <div className="relative p-8 bg-white w-96 max-w-lg mx-auto rounded-lg shadow-lg">
-        {/* 💡 Xボタンの追加 */}
+        {/* ×で閉じるボタン */}
         <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-700" onClick={ModalClose}>
           <span className="text-2xl">&times;</span>
         </button>

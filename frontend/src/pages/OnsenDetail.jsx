@@ -147,7 +147,7 @@ function OnsenDetail({ login, userId }) {
         <EditOnsenName
           onsenName={onsen.name}
           id={id}
-          ModalClose={ModalClose()}
+          ModalClose={ModalClose}
         />
       )}
       {onsen.image_url && (
