@@ -82,7 +82,7 @@ function OnsenDetail({ login, userId }) {
       }
       // 編集に必要なユーザーの貢献度(role)
       
-      const result = await fetch(`http://localhost:3000/api/onsen/userrolecheck`, {
+      const result = await fetch(`http://localhost:3000/api/onsen/userrolecheckmiddle`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',

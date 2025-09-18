@@ -118,8 +118,8 @@ function Edit({ login, setLogin }) {
             >
               水風呂
             </div>
-            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setColdBath(e.target.value === 'あり')} />あり
-            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setColdBath(e.target.value === 'あり')} />なし
+            <input type="radio" name="coldBathStatus" value="あり" onChange={(e) => setColdBath(e.target.value === 'あり')} />あり
+            <input type="radio" name="coldBathStatus" value="なし" onChange={(e) => setColdBath(e.target.value === 'あり')} />なし
           </div>
           <div>
             <div
@@ -142,8 +142,8 @@ function Edit({ login, setLogin }) {
             >
               露天風呂
             </div>
-            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setRotenburo(e.target.value === 'あり')} />あり
-            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setRotenburo(e.target.value === 'あり')} />なし
+            <input type="radio" name="rotenStatus" value="あり" onChange={(e) => setRotenburo(e.target.value === 'あり')} />あり
+            <input type="radio" name="rotenStatus" value="なし" onChange={(e) => setRotenburo(e.target.value === 'あり')} />なし
           </div>
           <div>
             <div
@@ -154,8 +154,8 @@ function Edit({ login, setLogin }) {
             >
               外気浴
             </div>
-            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setOutdoor(e.target.value === 'あり')} />あり
-            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setOutdoor(e.target.value === 'あり')} />なし
+            <input type="radio" name="outdoorStatus" value="あり" onChange={(e) => setOutdoor(e.target.value === 'あり')} />あり
+            <input type="radio" name="outdoorStatus" value="なし" onChange={(e) => setOutdoor(e.target.value === 'あり')} />なし
           </div>
           <div>
             <div
@@ -166,8 +166,8 @@ function Edit({ login, setLogin }) {
             >
               泡風呂
             </div>
-            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setBubbleBath(e.target.value === 'あり')} />あり
-            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setBubbleBath(e.target.value === 'あり')} />なし
+            <input type="radio" name="bubbleStatus" value="あり" onChange={(e) => setBubbleBath(e.target.value === 'あり')} />あり
+            <input type="radio" name="bubbleStatus" value="なし" onChange={(e) => setBubbleBath(e.target.value === 'あり')} />なし
           </div>
           <div>
             <div
@@ -178,8 +178,8 @@ function Edit({ login, setLogin }) {
             >
               ジェットバス
             </div>
-            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setJetBath(e.target.value === 'あり')} />あり
-            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setJetBath(e.target.value === 'あり')} />なし
+            <input type="radio" name="jetStatus" value="あり" onChange={(e) => setJetBath(e.target.value === 'あり')} />あり
+            <input type="radio" name="jetStatus" value="なし" onChange={(e) => setJetBath(e.target.value === 'あり')} />なし
           </div>
           <div>
             <div
@@ -190,8 +190,8 @@ function Edit({ login, setLogin }) {
             >
               シャンプー/ボディーソープ
             </div>
-            <input type="radio" name="saunaStatus" value="あり" onChange={(e) => setShampoo(e.target.value === 'あり')} />あり
-            <input type="radio" name="saunaStatus" value="なし" onChange={(e) => setShampoo(e.target.value === 'あり')} />なし
+            <input type="radio" name="shampooStatus" value="あり" onChange={(e) => setShampoo(e.target.value === 'あり')} />あり
+            <input type="radio" name="shampooStatus" value="なし" onChange={(e) => setShampoo(e.target.value === 'あり')} />なし
           </div>
 
           <button
