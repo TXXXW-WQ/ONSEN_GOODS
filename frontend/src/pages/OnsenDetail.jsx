@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ROUTES } from '../const'
-import EditOnsenName from './EditOnsenName';
+import EditOnsenName from './modals/EditOnsenName';
 
 function OnsenDetail({ login, userId }) {
   const { id } = useParams();
@@ -81,7 +81,7 @@ function OnsenDetail({ login, userId }) {
         return
       }
       // 編集に必要なユーザーの貢献度(role)
-      
+
       const result = await fetch(`http://localhost:3000/api/onsen/userrolecheckmiddle`, {
         method: 'POST',
         headers: {
@@ -184,7 +184,8 @@ function OnsenDetail({ login, userId }) {
             ))}
           </div>
         </div>
-        <Link to={ROUTES.EDIT.replace(':id', id)} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備情報を投稿する</Link>
+        <Link to={ROUTES.EDIT.replace(':id', id)}
+        onClick={handleNameEditClick} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備情報を投稿する</Link>
         <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
       </div>
       <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
@@ -198,7 +199,7 @@ function OnsenDetail({ login, userId }) {
           to={ROUTES.REVIEW.replace(':id', id)}
           className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
         >
-        この温泉を評価する →
+          この温泉を評価する →
         </Link>
       </div>
       <div className="mt-10">
