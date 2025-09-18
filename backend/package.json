@@ -9,6 +9,7 @@
     ]
   },
   "scripts": {
+    "build": "npm install",
     "test": "jest"
   },
   "keywords": [],
