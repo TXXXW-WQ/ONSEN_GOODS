@@ -21,9 +21,9 @@ router.get('/me', authenticateJWT, authController.checkLogin);
 router.post('/logout', authenticateJWT, authController.logout);
 
 // roleの検証
-router.post('/userrolecheckhigh', authenticateJWT, highRole.highRole)
-router.post('/userrolecheckmiddle', authenticateJWT, middleRole.middleRole)
-router.post('/userrolechecklow', authenticateJWT, lowRole.lowRole)
+router.post('/rolecheck/high', authenticateJWT, highRole.highRole)
+router.post('/rolecheck/middle', authenticateJWT, middleRole.middleRole)
+router.post('/rolecheck/low', authenticateJWT, lowRole.lowRole)
 
 // すべての温泉情報を取得するAPIエンドポイント
 // GET /api/onsen

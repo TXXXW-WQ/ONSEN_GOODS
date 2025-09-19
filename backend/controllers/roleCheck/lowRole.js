@@ -2,7 +2,7 @@ const db = require('../../db/database');
 
 /**
  * ユーザーの権限が
- * @route POST /api/onser/userrolechecklow
+ * @route POST /api/onsen/rolecheck/low
  * @param {object} req.user - 認証済みユーザー情報 (JWTから取得)
  * @param {int} contriburion - 必要な貢献度
  */

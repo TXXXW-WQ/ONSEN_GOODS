@@ -82,21 +82,16 @@ function OnsenDetail({ login, userId }) {
       }
       // 編集に必要なユーザーの貢献度(role)
 
-      const result = await fetch(`http://localhost:3000/api/onsen/userrolecheckmiddle`, {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          userId,
-          contribution,
-        }),
-      });
-      if (result.ok) {
-        setAuthError(null); // 既存のエラーメッセージをクリア
-        setIsEditNameOpen(true);
+      /**
+       * @param role - 必要な権限レベル
+       */
+      const role = 'middle'
+      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`)
+      if (!rolecheck.ok) {
+        setAuthError('必要な権限がありませ'); 
+        return
       }
+      setIsEditNameOpen(true);
     } catch (e) {
       setAuthError('ユーザーの権限認証に失敗しました。');
       console.error('ユーザーの権限認証に失敗しました。');

@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../const';
 
-function Home() {
+function Home({ login }) {
   const [onsenList, setOnsenList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
+
+  const navigate = useNavigate();
+  /**
+   * @param addAuthError - 認証時のエラーメッセージ
+   */
+  const [addAuthError, setAddAuthError] = useState(null)
 
   useEffect(() => {
     // コンポーネントがマウントされたとき、APIからデータ取得
@@ -14,8 +20,8 @@ function Home() {
       try {
         const response = await fetch('http://localhost:3000/api/onsen');
         if (!response.ok) {
-          throw new Error (`HTTP error! status: ${response.status}`);
-        } 
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setOnsenList(data); // 取得した値をstateにセット
       } catch (e) {
@@ -36,6 +42,27 @@ function Home() {
     return <div>エラー: 温泉情報を取得できませんでした。</div>
   }
 
+  const handleAddOnsen = async () => {
+    try {
+      if (!login) {
+        setAddAuthError('ログインが必要です。');
+        return
+      }
+      /**
+       * @param role - 必要な権限レベル
+       */
+      const role = 'high'
+      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`)
+      if (!rolecheck.ok) {
+        setAddAuthError('必要な権限がありません');
+        return;
+      }
+      navigate(ROUTES.AddOnsen)
+    } catch {
+      setAddAuthError('エラーが発生しま した。')
+    }
+  }
+
   const filteredOnsenList = onsenList.filter(onsen =>
     onsen.name.toLowerCase().includes(search.toLowerCase()) ||
     (onsen.location && onsen.location.toLowerCase().includes(search.toLowerCase()))
@@ -45,7 +72,7 @@ function Home() {
     <div className='p-6 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-8'>
       <h1 className='text-4xl font-extrabold text-blue-700 mb-8 text-center'>温泉一覧ページ</h1>
       <div>
-        <input 
+        <input
           type="text"
           placeholder="温泉名で検索"
           value={search}
@@ -53,15 +80,14 @@ function Home() {
           className="border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
-    
+
       <div>
-        <Link to={ROUTES.AddOnsen} className="inline-block mt-4 mb-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300">
-          温泉を追加する
-        </Link>
+        <button onClick={handleAddOnsen}>温泉を追加する</button>
+        {addAuthError && <p>{addAuthError}</p>}
       </div>
       {filteredOnsenList.length === 0 ? (
         <p className="text-center text-gray-600 text-lg py-10">登録されている温泉はまだありません。</p>
-      ):(
+      ) : (
         <ul className="list-none max-w-2x1 max-auto gap-8">
           {filteredOnsenList.map((onsen) => (
             <li key={onsen.id} className='border border-gray-200 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white'>

@@ -2,7 +2,7 @@ const db = require('../../db/database');
 
 /**
  * ユーザーの権限の検証を行うコントローラー
- * @route POST /api/onsen/userrolecheckhigh
+ * @route POST /api/onsen/rolecheck/high
  * @param {object} req.user - 認証済みユーザー情報 (JWTから取得)
  * @param {int} contriburion - 必要な貢献度
  */
@@ -19,6 +19,7 @@ exports.highRole = async (req, res) => {
     const userContribution = userResult.rows[0].contribution_score;
     
     if ( contribution <=  userContribution) {
+      console.log('権限確認')
       return res.status(200).json({ message: '権限があります。' });
     } else {
       return res.status(400).json({ message: '必要な権限を持っていません。'});
