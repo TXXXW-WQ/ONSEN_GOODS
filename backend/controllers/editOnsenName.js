@@ -13,6 +13,10 @@ exports.editOnsenName = async (req, res) => {
   const { newName } = req.body;
   const userId = req.user.id; 
 
+  const userResult = await db.query(`SELECT role FROM users WHERE id = $1`, [userId]);
+  if (userResult.rows[0].role == '温泉家' || userResult.rows[0].role == '探湯者') {
+    return res.status(401).json({ message: '権限が確認できませんでした'})
+  }
   if (!newName || newName.trim() === ""){
     return res.status(400).json({ message: '新しい名前は必須です。' });
   }
@@ -38,8 +42,7 @@ exports.editOnsenName = async (req, res) => {
     // 4. 名前の更新
     await client.query(`
       UPDATE hot_springs
-      SET name = $1, name_changer_user_id = $2, name_complaints = 0
-      WHERE id = $3
+      SET name = $1, name_changer_user_id = $2, WHERE id = $3
     `, [newName, userId, id]);
     
     await client.query('COMMIT'); // トランザクションをコミット
