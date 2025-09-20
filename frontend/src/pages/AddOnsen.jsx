@@ -11,23 +11,7 @@ function AddOnsen({ login }) {
   /**
    * ログイン中のユーザー情報を取得
    */
-  const [userId, setUserId] = useState(null);
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const result = await fetch('http://localhost:3000/api/onsen/me', {
-          credentials: 'include'
-        })
-        if (result.ok) {
-          const data = await result.json();
-          setUserId(data.user.id);
-        }
-      } catch (e) {
-        console.error('ユーザー情報の取得中にエラーが発生しました:', e);
-      }
-    }
-    fetchUser();
-  }, [login]);
+  
   /**
    * postする温泉の基本情報
    * @param {string} onsenName 温泉名
@@ -71,7 +55,6 @@ function AddOnsen({ login }) {
         },
         credentials: 'include',
         body: JSON.stringify({
-          userId,
           onsenName,
           imageUrl,
           location,

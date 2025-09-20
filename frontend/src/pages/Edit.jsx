@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTES } from '../const';
 
-function Edit({ login, userId }) {
+function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -33,13 +33,6 @@ function Edit({ login, userId }) {
   const [bubbleBath, setBubbleBath] = useState(false);
   const [jetBath, setJetBath] = useState(false);
   const [shampoo, setShampoo] = useState(false);
-
-  useEffect(() => {
-    if (!login) {
-      navigate(ROUTES.LOGIN, { state: { fromEdit: true } });
-    }
-    // console.log("login確認できず");
-  }, [login]);
 
   useEffect(() => {
     const fetchOnsenDetail = async () => {

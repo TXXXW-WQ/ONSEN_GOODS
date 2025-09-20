@@ -10,7 +10,7 @@ const db = require('../db/database');
  */
 exports.addOnsenName = async (req, res) => {
 
-  const userId = req.body.userId;
+  const userId = req.user.id;
   const onsenName = req.body.onsenName;
   const location = req.body.location || null;
   const description = req.body.description || '';

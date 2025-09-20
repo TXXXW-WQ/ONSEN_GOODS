@@ -9,9 +9,7 @@ function Login({ login, setLogin }) {
   const navigate = useNavigate()
   const location = useLocation()
   
-  const fromReview = location.state && location.state.fromReview
-  const fromEdit = location.state && location.state.fromEdit
-  const fromAddOnsen = location.state && location.state.fromAddOnsen
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
@@ -38,21 +36,6 @@ function Login({ login, setLogin }) {
   return (
     <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded shadow">
       <h2 className="text-2xl font-bold mb-6 text-center">ログイン</h2>
-      {fromReview && (
-        <div className="mb-4 text-blue-700 font-semibold text-center">
-          評価の投稿にはログインが必要です。
-        </div>
-      )}
-      {fromEdit && (
-        <div className="mb-4 text-blue-700 font-semibold text-center">
-          設備の編集にはログインが必要です。
-        </div>
-      )}
-      {fromAddOnsen && (
-        <div className="mb-4 text-blue-700 font-semibold text-center">
-          温泉の追加にはログインが必要です。
-        </div>
-      )}
       {error && <div className="mb-4 text-red-600">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

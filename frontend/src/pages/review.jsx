@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '../const'
 
-function Review({ login, setLogin }) {
+function Review({ login }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -19,13 +19,6 @@ function Review({ login, setLogin }) {
   const [errorOnsen, setErrorOnsen] = useState(null);
   const [errorSubmit, setErrorSubmit] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  useEffect(() => {
-    if (!login) {
-      navigate(ROUTES.LOGIN, { state: { fromReview: true } });
-      // console.log("ログイン確認できず");
-    }
-  }, [login, navigate]);
 
   useEffect(() => {
     const fetchOnsenName = async () => {
