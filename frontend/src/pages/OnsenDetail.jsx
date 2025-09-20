@@ -86,9 +86,15 @@ function OnsenDetail({ login, userId }) {
        * @param role - 必要な権限レベル
        */
       const role = 'middle'
-      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`)
+      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
       if (!rolecheck.ok) {
-        setAuthError('必要な権限がありませ'); 
+        setAuthError('必要な権限がありません。');
         return
       }
       setIsEditNameOpen(true);
@@ -180,7 +186,7 @@ function OnsenDetail({ login, userId }) {
           </div>
         </div>
         <Link to={ROUTES.EDIT.replace(':id', id)}
-        onClick={handleNameEditClick} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備情報を投稿する</Link>
+          onClick={handleNameEditClick} className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">設備情報を投稿する</Link>
         <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
       </div>
       <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">

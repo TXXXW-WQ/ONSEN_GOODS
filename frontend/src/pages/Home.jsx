@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../const';
 
-function Home({ login }) {
+function Home({ login, userId }) {
   const [onsenList, setOnsenList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,7 +52,13 @@ function Home({ login }) {
        * @param role - 必要な権限レベル
        */
       const role = 'high'
-      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`)
+      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
       if (!rolecheck.ok) {
         setAddAuthError('必要な権限がありません');
         return;

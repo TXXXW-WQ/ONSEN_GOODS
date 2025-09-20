@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { ROUTES } from '../const';
 
-function Edit({ login, setLogin }) {
+function Edit({ login, userId }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
