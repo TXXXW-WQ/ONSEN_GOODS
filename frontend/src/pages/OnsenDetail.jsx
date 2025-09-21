@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '../const'
 import EditOnsenName from './modals/EditOnsenName';
+import Editdescription from './modals/EditDiscription';
 
 function OnsenDetail({ login }) {
   const { id } = useParams();
@@ -11,8 +12,11 @@ function OnsenDetail({ login }) {
   const [isEditNameOpen, setIsEditNameOpen] = useState(false);
   const [editNameAuthError, seteditNameAuthError] = useState(null);
   const [editFacilityAuth, setEditFacilityAuth] = useState(null);
-  const [reviewAuthError, setReviewAuthError] = useState(null)
+  const [reviewAuthError, setReviewAuthError] = useState(null);
+  const [isEditdescriptionOpen, setIsEditdescriptionOpen] = useState(false);
+  const [authEditdescriptionE, setAuthEditdescriptionE] = useState(null);
   const navigate = useNavigate();
+
   // 評価一覧のstate
   const [ratings, setRatings] = useState([]);
   const [ratingsLoading, setRatingsLoading] = useState(true);
@@ -36,7 +40,7 @@ function OnsenDetail({ login }) {
       }
     };
     fetchOnsenDetail();
-  }, [id, isEditNameOpen]);
+  }, [id]);
 
   // 取得した設備情報をマッピング
   const facilityItems = [
@@ -72,7 +76,6 @@ function OnsenDetail({ login }) {
   }, [id]);
 
 
-  const [contribution, setContribution] = useState(50)
   // 温泉名編集ボタンクリック時の処理
   const handleNameEditClick = async () => {
     try {
@@ -108,38 +111,63 @@ function OnsenDetail({ login }) {
   // モーダルを閉じるためのコールバック関数
   const ModalClose = () => {
     setIsEditNameOpen(false);
+    setIsEditdescriptionOpen(false);
   }
 
   const handleFacilityEdit = async () => {
     try {
       if (!login) {
-      setEditFacilityAuth('ログインが必要です。')
-    }
-    const role = 'low'
-    const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    })
-    if (!rolecheck.ok){
-      setEditFacilityAuth('必要な権限がありません。');
-      return;
-    }
-    navigate(ROUTES.EDIT);
+        setEditFacilityAuth('ログインが必要です。')
+        return
+      }
+      const role = 'low'
+      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      if (!rolecheck.ok) {
+        setEditFacilityAuth('必要な権限がありません。');
+        return;
+      }
+      navigate(ROUTES.EDIT.replace(':id', id));
     } catch {
       setEditFacilityAuth('エラーが発生しました。')
     }
-    
-  } 
 
-  const handleReviewClick = ()=> {
+  }
+
+  const handleEditdescription = async () => {
+    if (!login) {
+      setAuthEditdescriptionE('ログインが必要です。')
+      return
+    }
+    try {
+      const role = 'middle';
+      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      if (!rolecheck.ok) {
+        setAuthEditdescriptionE('必要な権限がありません。');
+        return;
+      }
+      setIsEditdescriptionOpen(true)
+    } catch {
+      setAuthEditdescriptionE('エラーが発生しました。')
+    }
+  }
+  const handleReviewClick = () => {
     if (!login) {
       setReviewAuthError('ログインが必要です。');
       return
     }
-    navigate(ROUTES.REVIEW);
+    navigate(ROUTES.REVIEW.replace(":id",id));
   }
 
   if (loading) {
@@ -161,114 +189,137 @@ function OnsenDetail({ login }) {
 
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white shadow-xl rounded-xl mt-8 mb-8">
-  <div className="flex flex-col items-center mb-6">
-    <h1 className="text-4xl font-extrabold text-blue-700">{onsen.name}</h1>
-    <div className="mt-4 flex flex-col items-center">
-      <button
-        onClick={handleNameEditClick}
-        className="px-6 py-2 text-base bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-300"
-      >
-        温泉名を編集
-      </button>
-      {editNameAuthError && (
-        <p className="text-red-500 text-xs mt-2">{editNameAuthError}</p>
+      <div className="flex flex-col items-center mb-6">
+        <h1 className="text-4xl font-extrabold text-blue-700">{onsen.name}</h1>
+        <div className="mt-4 flex flex-col items-center">
+          <button
+            onClick={handleNameEditClick}
+            className="px-6 py-2 text-base bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-300"
+          >
+            温泉名を編集
+          </button>
+          {editNameAuthError && (
+            <p className="text-red-500 text-xs mt-2">{editNameAuthError}</p>
+          )}
+        </div>
+      </div>
+      {isEditNameOpen && (
+        <EditOnsenName
+          onsenName={onsen.name}
+          id={id}
+          ModalClose={ModalClose}
+        />
       )}
-    </div>
-  </div>
-  {isEditNameOpen && (
-    <EditOnsenName
-      onsenName={onsen.name}
-      id={id}
-      ModalClose={ModalClose}
-    />
-  )}
-  {onsen.image_url && (
-    <div className="mb-6 text-center">
-      <img
-        src={onsen.image_url}
-        alt={onsen.name}
-        className="w-full h-64 object-cover rounded-lg shadow-md border border-gray-200 mx-auto"
-        style={{ maxWidth: '600px' }}
-      />
-    </div>
-  )}
-  <div className="space-y-4 text-gray-800 text-lg">
-    <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
-    <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 0.00} / 5.00</p>
-    <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
-    <div>
-      <h3 className="text-xl font-bold mb-2">設備情報</h3>
-      <div className="flex flex-wrap gap-2">
-        {facilityItems.map(item => (
-          <div
-            key={item.key}
-            className={`
+      {onsen.image_url && (
+        <div className="mb-6 text-center">
+          <img
+            src={onsen.image_url}
+            alt={onsen.name}
+            className="w-full h-64 object-cover rounded-lg shadow-md border border-gray-200 mx-auto"
+            style={{ maxWidth: '600px' }}
+          />
+        </div>
+      )}
+      <div className="space-y-4 text-gray-800 text-lg">
+        <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
+        <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 0.00} / 5.00</p>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <p><strong className="font-semibold text-gray-700">説明:</strong> {onsen.description}</p>
+            <button
+              onClick={handleEditdescription}
+              className="px-4 py-1 text-sm bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-300 ml-auto"
+            >
+              編集
+            </button>
+          </div>
+          {authEditdescriptionE && (
+            <p className="text-red-500 text-xs mt-2">{authEditdescriptionE}</p>
+          )}
+        </div>
+        {isEditdescriptionOpen && (
+          <Editdescription
+            id={id}
+            currentdescription={onsen.description}
+            ModalClose={ModalClose}
+          />
+        )}
+        <div>
+          <h3 className="text-xl font-bold mb-2">設備情報</h3>
+          <div className="flex flex-wrap gap-2">
+            {facilityItems.map(item => (
+              <div
+                key={item.key}
+                className={`
               px-3 py-1 rounded-full text-sm font-medium
               ${onsen[item.key]
-                ? 'bg-green-100 border border-green-500 text-green-700'
-                : 'bg-gray-100 border border-gray-300 text-gray-500'
-              }
+                    ? 'bg-green-100 border border-green-500 text-green-700'
+                    : 'bg-gray-100 border border-gray-300 text-gray-500'
+                  }
             `}
-          >
-            {item.label}
+              >
+                {item.label}
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+        <div className="mt-4">
+          <button
+            onClick={handleFacilityEdit}
+            className="px-6 py-2 text-base bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+          >
+            設備情報を投稿する
+          </button>
+          {editFacilityAuth && (
+            <p className="text-red-500 text-xs mt-2">{editFacilityAuth}</p>
+          )}
+        </div>
+        <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
+      </div>
+      <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+        <Link
+          to={ROUTES.HOME}
+          className="inline-block px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
+        >
+          ← 温泉一覧に戻る
+        </Link>
+        <button
+          onClick={handleReviewClick}
+          className="px-6 py-3 text-base bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 flex-grow sm:flex-none"
+        >
+          評価を投稿する
+        </button>
+      </div>
+      {reviewAuthError && (
+        <p className="text-red-500 text-xs text-center mt-2">{reviewAuthError}</p>
+      )}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold mb-4 text-blue-800">ユーザーの評価・コメント</h2>
+        {ratingsLoading ? (
+          <div className="text-center text-gray-500">評価を読み込み中...</div>
+        ) : ratings.length === 0 ? (
+          <div className="text-center text-gray-500">まだ評価がありません。</div>
+        ) : (
+          <ul className="space-y-4">
+            {ratings.map((r, i) => (
+              r.comment && (
+                <li key={r.id || i} className="border rounded-lg p-4 shadow-sm bg-gray-50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-yellow-600">
+                      {r.rating_value ? `★ ${Number(r.rating_value).toFixed(1)} / 5.00` : ''}
+                    </span>
+                    <span className="text-xs text-gray-400 ml-2">
+                      {r.username || '匿名'}・{new Date(r.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="text-gray-800">{r.comment}</div>
+                </li>
+              )
+            ))}
+          </ul>
+        )}
       </div>
     </div>
-    <div className="mt-4">
-      <button
-        onClick={handleFacilityEdit}
-        className="px-6 py-2 text-base bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
-      >
-        設備情報を投稿する
-      </button>
-      {editFacilityAuth && (
-        <p className="text-red-500 text-xs mt-2">{editFacilityAuth}</p>
-      )}
-    </div>
-    <p className="text-sm text-gray-500 mt-4">最終更新日: {onsen.updated_at ? new Date(onsen.updated_at).toLocaleDateString() : '不明'}</p>
-  </div>
-  <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-    <Link
-      to={ROUTES.HOME}
-      className="inline-block px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition-colors duration-300 text-center flex-grow sm:flex-none"
-    >
-      ← 温泉一覧に戻る
-    </Link>
-    <button
-      onClick={handleReviewClick}
-      className="px-6 py-3 text-base bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 flex-grow sm:flex-none"
-    >
-      評価を投稿する
-    </button>
-  </div>
-  <div className="mt-10">
-    <h2 className="text-2xl font-bold mb-4 text-blue-800">ユーザーの評価・コメント</h2>
-    {ratingsLoading ? (
-      <div className="text-center text-gray-500">評価を読み込み中...</div>
-    ) : ratings.length === 0 ? (
-      <div className="text-center text-gray-500">まだ評価がありません。</div>
-    ) : (
-      <ul className="space-y-4">
-        {ratings.map((r, i) => (
-          r.comment && (
-            <li key={r.id || i} className="border rounded-lg p-4 shadow-sm bg-gray-50">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-semibold text-yellow-600">
-                  {r.rating_value ? `★ ${Number(r.rating_value).toFixed(1)} / 5.00` : ''}
-                </span>
-                <span className="text-xs text-gray-400 ml-2">
-                  {r.username || '匿名'}・{new Date(r.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="text-gray-800">{r.comment}</div>
-            </li>
-          )
-        ))}
-      </ul>
-    )}
-  </div>
-</div>
   )
 }
 

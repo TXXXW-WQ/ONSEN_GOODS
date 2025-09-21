@@ -2,12 +2,12 @@ const db = require('../db/database');
 
 /**
  * 温泉の説明を編集
- * @route PUT /api/onsen/:id/editdiscription
+ * @route PUT /api/onsen/:id/editdescription
  */
 
-exports.editDiscription = async (req, res) => {
-  const id = req.params;
-  const newDiscription = req.body.discription
+exports.editdescription = async (req, res) => {
+  const id = req.params.id;
+  const newdescription = req.body.newdescription
   const userId = req.user.id;
 
   const userResult = await db.query(`SELECT role FROM users WHERE id = $1`, [userId]);
@@ -15,7 +15,7 @@ exports.editDiscription = async (req, res) => {
     return res.status(401).json({ message: '権限が確認できませんでした' })
   }
 
-  if (!newDiscription || newDiscription.trim() == "") {
+  if (!newdescription || newdescription.trim() == "") {
     return res.status(401).json({ message: '説明がありません。' })
   }
 
@@ -25,20 +25,23 @@ exports.editDiscription = async (req, res) => {
     // 1. 温泉が存在するか確認
     const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [id]);
     if (onsenResult.rows.length === 0) {
+      client.release();
       return res.status(404).json({ message: '指定された温泉が見つかりませんでした。' });
     }
 
-    await client.query('BIGIN')
+    await client.query('BEGIN')
 
     await client.query(`
       UPDATE hot_springs
       SET description = $1, description_changer_user_id = $2
       WHERE id = $3
-    `, [newDiscription, userId, id])
+    `, [newdescription, userId, id])
     await client.query('COMMIT');
-    return res.status(500).json(({ message: '説明が正常に更新されました。'}))
-  } catch {
+    res.status(200).json({ message: '説明が正常に更新されました。'})
+  } catch(e) {
+    console.error(e)
     await client.query('ROLLBACK');
+    res.status(403).json({ message: '説明の編集に失敗しました。'})
   } finally {
     client.release()
   }

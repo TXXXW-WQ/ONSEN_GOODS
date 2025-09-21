@@ -34,10 +34,13 @@ function Edit() {
   const [jetBath, setJetBath] = useState(false);
   const [shampoo, setShampoo] = useState(false);
 
+  // useEffect(() => {
+  //   console.log(id)
+  // }, [id])
   useEffect(() => {
     const fetchOnsenDetail = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/onsen/${id}`);
+        const response = await fetch(`http://localhost:3000/api/onsen/${id}`)
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);

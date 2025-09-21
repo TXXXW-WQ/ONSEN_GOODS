@@ -119,7 +119,7 @@ function App() {
       <Routes>
         <Route path={ROUTES.HOME} element={<Home login={login}/>} />
         <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail login={login}/>} />
-        <Route path={ROUTES.LOGIN} element={<Login login={login}/>} />
+        <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
         <Route path={ROUTES.AddOnsen} element={<AddOnsen login={login} />} />
         <Route path={ROUTES.REVIEW} element={<Review login={login}/>} />

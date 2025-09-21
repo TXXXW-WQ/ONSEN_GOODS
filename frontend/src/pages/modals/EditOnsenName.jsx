@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 function EditOnsenName({ onsenName, id, ModalClose }) {
-  const [newName, setNewName] = React.useState(onsenName);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(null);
-  const [success, setSuccess] = React.useState(false);
+  const [newName, setNewName] = useState(onsenName);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

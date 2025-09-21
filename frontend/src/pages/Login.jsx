@@ -36,6 +36,7 @@ function Login({ login, setLogin }) {
   return (
     <div className="max-w-md mx-auto mt-12 p-8 bg-white rounded shadow">
       <h2 className="text-2xl font-bold mb-6 text-center">ログイン</h2>
+      
       {error && <div className="mb-4 text-red-600">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

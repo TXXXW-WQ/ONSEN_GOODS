@@ -18,7 +18,7 @@ async function setup() {
         role VARCHAR(20) DEFAULT '探湯者',
         review_count INTEGER DEFAULT 0,
         picture_count INTEGER DEFAULT 0,
-        discription_edit_count INTEGER DEFAULT 0,
+        description_edit_count INTEGER DEFAULT 0,
         onsen_add_count INTEGER DEFAULT 0,
         contribution_score INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -26,6 +26,7 @@ exports.editOnsenName = async (req, res) => {
     // 1. 温泉が存在するか確認
     const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [id]);
     if (onsenResult.rows.length === 0) {
+      client.release();
       return res.status(404).json({ message: '指定された温泉が見つかりませんでした。' });
     }
     
@@ -35,6 +36,7 @@ exports.editOnsenName = async (req, res) => {
     const nameCheck = await client.query('SELECT * FROM hot_springs WHERE name = $1', [newName]);
     if (nameCheck.rows.length > 0) {
       await client.query('ROLLBACK');
+      client.release();
       return res.status(409).json({ message: 'その名前は既に使用されています。' });
     }
 
@@ -42,15 +44,15 @@ exports.editOnsenName = async (req, res) => {
     // 4. 名前の更新
     await client.query(`
       UPDATE hot_springs
-      SET name = $1, name_changer_user_id = $2, WHERE id = $3
+      SET name = $1, name_changer_user_id = $2 WHERE id = $3
     `, [newName, userId, id]);
     
     await client.query('COMMIT'); // トランザクションをコミット
-    return res.status(200).json({ message: '名前が正常に更新されました。' });
+    res.status(200).json({ message: '名前が正常に更新されました。' });
   } catch (e) {
     await client.query('ROLLBACK');
     console.error('温泉名前編集エラー:', e);
-    return res.status(500).json({ message: '名前の更新中にエラーが発生しました。' });
+    res.status(500).json({ message: '名前の更新中にエラーが発生しました。' });
 
   } finally {
     client.release(); // クライアントを解放

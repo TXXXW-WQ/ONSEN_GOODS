@@ -63,7 +63,7 @@ exports.getRatingByOnsenId = async (req, res) => {
 //3. 特定の温泉に対する評価を投稿するAPI(POST /api/onsen/:id/rating)
 // ユーザーから評価とコメントを受け取り、ratingsテーブルの保存、hot_springsテーブルの平均評価を更新。
 exports.postRating = async (req, res) => {
-  const onsenId = req.params.id; // URLパラメータから温泉IDを取得
+  const onsenId = req.params; // URLパラメータから温泉IDを取得
   const userId = req.user.id;
   const { rating, comment } = req.body // リクエストボディから評価とコメントを取得
 
@@ -126,9 +126,9 @@ exports.postRating = async (req, res) => {
 
 // 各情報の評価(good/bad)をpostするapi
 exports.postGoodAndBad = async (req, res) => {
-  const onsenId = req.params.id;
+  const onsenId = req.params;
   const updates = req.body;
-
+  console.log(onsenId)
   let client;
   try {
     //  クライアントを接続し、トランザクションを開始

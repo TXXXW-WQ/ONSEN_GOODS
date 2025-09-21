@@ -19,10 +19,10 @@ exports.addOnsenName = async (req, res) => {
   const userResult = await db.query(`SELECT role FROM users WHERE id = $1`, [userId]);
 
   // ユーザーが存在しない場合、またはロールが「探湯者」か「温泉家」の場合
-  if (userResult.rows.length === 0 || userResult.rows[0].role === '探湯者' || userResult.rows[0].role === '温泉家' ||  userResult.rows[0].role == '名湯案内人') {
+  if (userResult.rows.length === 0 || userResult.rows[0].role === '探湯者' || userResult.rows[0].role === '温泉家' || userResult.rows[0].role == '名湯案内人') {
     const userRole = userResult.rows.length > 0 ? userResult.rows[0].role : '未登録ユーザー';
     console.log('温泉追加権限なし:', userRole);
-    return res.status(403).json({ error: '温泉追加の権限がありません。'});
+    return res.status(403).json({ error: '温泉追加の権限がありません。' });
   }
 
   // 入力された温泉名の確認
@@ -35,7 +35,7 @@ exports.addOnsenName = async (req, res) => {
     // 温泉の追加実行
     const result = await db.query(`
       INSERT INTO hot_springs (
-      name, location, description, image_url, created_at, 
+      name, location, description, image_url, created_at
       ) VALUES ($1, $2, $3, $4, NOW())
       RETURNING *;
     `, [onsenName.trim(), location, description, imageUrl]);
@@ -43,6 +43,6 @@ exports.addOnsenName = async (req, res) => {
     res.status(201).json({ message: '温泉が正常に追加されました。', onsen: result.rows[0] });
   } catch (err) {
     console.error('温泉追加エラー:', err.message);
-    res.status(402).json({ message: '温泉の追加に失敗'})
+    res.status(402).json({ message: '温泉の追加に失敗' })
   }
 }
