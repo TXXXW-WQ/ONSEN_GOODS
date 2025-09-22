@@ -44,8 +44,8 @@ router.post('/:id/rating', authenticateJWT,onsenController.postRating);
 // 新しい温泉を追加するAPIエンドポイント
 router.post('/add', authenticateJWT, addOnsenName.addOnsenName);
 
-// 温泉の各情報(現在は施設情報のみ)に対するgood/badの数を更新する
-router.put('/:id/facilities', authenticateJWT, onsenController.postGoodAndBad)
+// 温泉の設備情報を投稿
+router.put('/:id/facilities', authenticateJWT, onsenController.postFacilities)
 
 // 温泉の名前を編集するAPIエンドポイント
 router.put('/:id/nameedit', authenticateJWT, editOnsenName.editOnsenName);

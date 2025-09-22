@@ -125,8 +125,8 @@ exports.postRating = async (req, res) => {
 }
 
 // 各情報の評価(good/bad)をpostするapi
-exports.postGoodAndBad = async (req, res) => {
-  const onsenId = req.params;
+exports.postFacilities = async (req, res) => {
+  const { onsenId } = req.params;
   const updates = req.body;
   console.log(onsenId)
   let client;
