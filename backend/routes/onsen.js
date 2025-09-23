@@ -8,6 +8,7 @@ const middleRole = require('../controllers/roleCheck/middleRole');
 const lowRole = require('../controllers/roleCheck/lowRole');
 const addOnsenName = require('../controllers/addOnsenName');
 const editdescription = require('../controllers/editDiscription')
+const getMypage = require('../controllers/getMypage')
 const authenticateJWT = require('../middleware/auth'); // JWT認証ミドルウェアを読み込む
 
 
@@ -20,6 +21,9 @@ router.get('/me', authenticateJWT, authController.checkLogin);
 
 // ログアウトエンドポイント
 router.post('/logout', authenticateJWT, authController.logout);
+
+// ユーザー情報の取得
+router.get('/mypage', authenticateJWT, getMypage.getMypage)
 
 // roleの検証
 router.post('/rolecheck/high', authenticateJWT, highRole.highRole)
