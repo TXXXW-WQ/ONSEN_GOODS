@@ -104,7 +104,6 @@ function Home({ login }) {
               <Link to={ROUTES.ONSEN_DETAIL.replace(':id', onsen.id)} className="block p-5 text-decoration-none text-gray-800" >
                 <h2 className="text-2xl font-semibold text-blue-800 mb-2">{onsen.name}</h2>
                 <p className="text-gray-600 text-base mb-1">場所: {onsen.location}</p>
-                <p className="text-gray-600 text-base mb-1">設備: {onsen.facilities}</p>
                 <p className="text-gray-700 text-base font-medium">評価: {onsen.rating ? onsen.rating.toFixed(2) : '0.00'} / 5.00</p>
               </Link>
             </li>

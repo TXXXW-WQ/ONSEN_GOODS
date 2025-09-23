@@ -58,7 +58,9 @@ function Edit() {
         setError(e);
         console.error(`温泉ID ${id} の詳細取得中にエラーが発生しました:`, e);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false)
+        }, 2000);
       }
     };
     fetchOnsenDetail();

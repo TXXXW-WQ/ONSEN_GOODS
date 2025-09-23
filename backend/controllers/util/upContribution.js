@@ -14,7 +14,7 @@ const CONTRIBUTION_WEIGHTS = {
  * @param {string} type - 更新する貢献タイプ ('review_count', 'picuture_count'など)
  */
 
-async function updateUserContribution(client, userId, type) {
+exports.updateUserContribution = async (client, userId, type) => {
   if (!CONTRIBUTION_WEIGHTS.hasOwnProperty(type)) {
     throw new Error('無効な貢献タイプです。');
   }

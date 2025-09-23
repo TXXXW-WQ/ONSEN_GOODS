@@ -63,7 +63,7 @@ exports.getRatingByOnsenId = async (req, res) => {
 //3. 特定の温泉に対する評価を投稿するAPI(POST /api/onsen/:id/rating)
 // ユーザーから評価とコメントを受け取り、ratingsテーブルの保存、hot_springsテーブルの平均評価を更新。
 exports.postRating = async (req, res) => {
-  const onsenId = req.params; // URLパラメータから温泉IDを取得
+  const { id } = req.params; // URLパラメータから温泉IDを取得
   const userId = req.user.id;
   const { rating, comment } = req.body // リクエストボディから評価とコメントを取得
 
@@ -79,7 +79,7 @@ exports.postRating = async (req, res) => {
   try {
 
     // 温泉の存在をチェック
-    const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [onsenId]);
+    const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [id]);
     if (onsenResult.rows.length === 0) {
       res.status(404).json({ error: '評価対象の温泉が見つかりません。' });
       return;
@@ -92,7 +92,7 @@ exports.postRating = async (req, res) => {
         hot_spring_id, user_id, rating, comment
       ) VALUES ($1, $2, $3, $4)`,
       [
-        onsenId,
+        id,
         userId,
         rating,
         comment
@@ -109,10 +109,10 @@ exports.postRating = async (req, res) => {
         SELECT AVG(rating) FROM ratings WHERE hot_spring_id = $1
       )
       WHERE id = $1
-    `, [onsenId]);
+    `, [id]);
 
     // 更新後の温泉情報を取得
-    const updatedOnsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [onsenId]);
+    const updatedOnsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1', [id]);
     await client.query('COMMIT'); // トランザクションをコミット
     res.status(200).json(updatedOnsenResult.rows[0]); // 更新された温泉情報を返す
   } catch (err) {
@@ -126,9 +126,8 @@ exports.postRating = async (req, res) => {
 
 // 各情報の評価(good/bad)をpostするapi
 exports.postFacilities = async (req, res) => {
-  const { onsenId } = req.params;
+  const { id } = req.params;
   const updates = req.body;
-  console.log(onsenId)
   let client;
   try {
     //  クライアントを接続し、トランザクションを開始
@@ -136,7 +135,7 @@ exports.postFacilities = async (req, res) => {
     await client.query('BEGIN');
 
     // FOR UPDATE を使用して行をロック
-    const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1 FOR UPDATE', [onsenId]);
+    const onsenResult = await client.query('SELECT * FROM hot_springs WHERE id = $1 FOR UPDATE', [id]);
     if (onsenResult.rows.length === 0) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: '評価対象の温泉が見つかりません。' });
@@ -184,7 +183,7 @@ exports.postFacilities = async (req, res) => {
       WHERE id = $${updateValues.length + 1}
       RETURNING *;
     `;
-    updateValues.push(onsenId);
+    updateValues.push(id);
 
     const result = await client.query(query, updateValues);
 
