@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, Route, Router, Routes } from 'react-router-dom'
+import { Link, Route, Router, Routes, useNavigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -8,6 +8,7 @@ import Review from './pages/Review'
 import { ROUTES } from './const'
 import Edit from './pages/Edit'
 import AddOnsen from './pages/AddOnsen'
+import Mypage from './pages/Mypage'
 
 
 // ページが見つからないとき
@@ -22,9 +23,11 @@ function NotFoundPage() {
 }
 
 function App() {
-
+  const [myPageOpen, setMyPageOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [login, setLogin] = useState(false);
+
+  const navigate = useNavigate()
   
   useEffect(() => {
     const checkLogin = async () => {
@@ -45,6 +48,10 @@ function App() {
     checkLogin();
   }, []);
 
+  const handleMypage = () => {
+    if (!login) return;
+    navigate(ROUTES.MYPAGE)
+  }
   const handleLogout = async () => {
     const result =  await fetch('http://localhost:3000/api/onsen/logout', {
       method: 'POST',
@@ -63,6 +70,11 @@ function App() {
             <Link to={ROUTES.HOME} className='text-white text-4xl font-extrabold tracking-wide hover:text-blue-200 transition-colors duration-300'>
               ONSEN GOODS
             </Link>
+          </li>
+          <li>
+            <button onClick={handleMypage} onFocus={() => setMyPageOpen(!myPageOpen)}>
+              アイコン
+            </button>
           </li>
           <li className="ml-auto relative">
             <button
@@ -121,6 +133,7 @@ function App() {
         <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail login={login}/>} />
         <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin}/>} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
+        <Route path={ROUTES.MYPAGE} element={<Mypage />} />
         <Route path={ROUTES.AddOnsen} element={<AddOnsen login={login} />} />
         <Route path={ROUTES.REVIEW} element={<Review login={login}/>} />
         <Route path={ROUTES.EDIT} element={<Edit login={login}/>} />

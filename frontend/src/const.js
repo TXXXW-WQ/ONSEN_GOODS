@@ -6,6 +6,7 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   REGISTER: "/register",
+  MYPAGE: "/mypage",
   ONSEN_DETAIL: '/onsen/:id',
   REVIEW: "/onsen/:id/review",
   EDIT: "/onsen/:id/edit",
