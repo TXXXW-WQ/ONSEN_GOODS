@@ -24,8 +24,6 @@ exports.getOnsenById = async (req, res) => {
       return res.status(404).json({ message: '指定された温泉が見つかりませんでした。' });
     }
 
-
-    // 温泉情報にfacilityRatesを追加して返す
     const onsen = result.rows[0];
 
     // 最新の平均評価を計算して反映

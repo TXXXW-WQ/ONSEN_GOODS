@@ -14,7 +14,8 @@ exports.getMypage = async(req, res) => {
     if (result.rows.length == 0){
       return res.status(404).json({ message: 'ユーザーが見つかりませんでした。'})
     }
-    return res.status(200).json({ message:"ユーザー情報の取得に成功しました。"})
+    const userInfo = result.rows[0]
+    return res.status(200).json(userInfo)
   } catch(e) {
     console.error(e)
     return res.status(400).json({ message: "ユーザー情報取得中にエラーが発生しました。"})
