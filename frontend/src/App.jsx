@@ -10,6 +10,10 @@ import Edit from './pages/Edit'
 import AddOnsen from './pages/AddOnsen'
 import Mypage from './pages/Mypage'
 
+import icon1 from './assets/kkrn_icon_user_1.svg'
+import icon2 from './assets/kkrn_icon_user_2.svg'
+import icon3 from './assets/kkrn_icon_user_3.svg'
+import icon4 from './assets/kkrn_icon_user_4.svg'
 
 // ページが見つからないとき
 function NotFoundPage() {
@@ -28,22 +32,22 @@ function App() {
   const [login, setLogin] = useState(false);
 
   const navigate = useNavigate()
-  
+
   useEffect(() => {
     const checkLogin = async () => {
       try {
-      const result = await fetch('http://localhost:3000/api/onsen/me', {
-        credentials: 'include'
-      })
+        const result = await fetch('http://localhost:3000/api/onsen/me', {
+          credentials: 'include'
+        })
         if (result.ok) {
           const data = await result.json();
           setLogin(!!data.user);
         } else {
           setLogin(false);
         }
-    } catch {
-      setLogin(false);
-    }
+      } catch {
+        setLogin(false);
+      }
     }
     checkLogin();
   }, []);
@@ -53,7 +57,7 @@ function App() {
     navigate(ROUTES.MYPAGE)
   }
   const handleLogout = async () => {
-    const result =  await fetch('http://localhost:3000/api/onsen/logout', {
+    const result = await fetch('http://localhost:3000/api/onsen/logout', {
       method: 'POST',
       credentials: 'include'
     })
@@ -71,72 +75,93 @@ function App() {
               ONSEN GOODS
             </Link>
           </li>
-          <li>
-            <button onClick={handleMypage} onFocus={() => setMyPageOpen(!myPageOpen)}>
-              アイコン
-            </button>
-          </li>
-          <li className="ml-auto relative">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="ml-4 px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600 focus:outline-none"
-            >
-              メニュー ▼
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10">
-                <Link
-                  to={ROUTES.HOME}
-                  className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
-                  onClick={() => setMenuOpen(false)}
+          <li className="ml-auto relative flex items-center">
+            {login && (
+              <div className="relative mr-4">
+                <button
+                  onClick={() => setMyPageOpen(!myPageOpen)}
+                  className='w-8 h-8 rounded-full overflow-hidden border border-white hover:border-blue-300 transition duration-150 focus:outline-none focus:ring-1 focus:ring-blue-300'
                 >
-                  ホーム
-                </Link>
-                {!login && (
-                  <>
+                  <img src={icon1} alt="ユーザーアイコン" className="w-full h-full object-cover" />
+                </button>
+                {myPageOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-xl z-20">
                     <Link
-                      to={ROUTES.LOGIN}
+                      to={ROUTES.MYPAGE}
                       className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
-                      onClick={() => setMenuOpen(false)}
+                      onClick={() => setMyPageOpen(false)}
                     >
-                      ログイン
+                      マイページへ
                     </Link>
-                    <Link
-                      to={ROUTES.REGISTER}
-                      className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
-                      onClick={() => setMenuOpen(false)}
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setMyPageOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-red-100"
                     >
-                      アカウント登録
-                    </Link>
-                  </>
-                )}
-                {login && (
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMenuOpen(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-100"
-                  >
-                    ログアウト
-                  </button>
+                      ログアウト
+                    </button>
+                  </div>
                 )}
               </div>
             )}
+
+            <div className="relative"> 
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600 focus:outline-none"
+              >
+                メニュー ▼
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                  <Link
+                    to={ROUTES.HOME}
+                    className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    ホーム
+                  </Link>
+                  {!login && (
+                    <>
+                      <Link to={ROUTES.LOGIN} className="block px-4 py-2 text-gray-800 hover:bg-blue-100" onClick={() => setMenuOpen(false)}>
+                        ログイン
+                      </Link>
+                      <Link to={ROUTES.REGISTER} className="block px-4 py-2 text-gray-800 hover:bg-blue-100" onClick={() => setMenuOpen(false)}>
+                        アカウント登録
+                      </Link>
+                    </>
+                  )}
+                  {login && (
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-100"
+                    >
+                      ログアウト
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </li>
         </ul>
       </nav>
 
       {/* ルートを定義 */}
       <Routes>
-        <Route path={ROUTES.HOME} element={<Home login={login}/>} />
-        <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail login={login}/>} />
-        <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin}/>} />
+        <Route path={ROUTES.HOME} element={<Home login={login} />} />
+        <Route path={ROUTES.ONSEN_DETAIL} element={<OnsenDetail login={login} />} />
+        <Route path={ROUTES.LOGIN} element={<Login login={login} setLogin={setLogin} />} />
         <Route path={ROUTES.REGISTER} element={<Register />} />
         <Route path={ROUTES.MYPAGE} element={<Mypage />} />
         <Route path={ROUTES.AddOnsen} element={<AddOnsen login={login} />} />
-        <Route path={ROUTES.REVIEW} element={<Review login={login}/>} />
-        <Route path={ROUTES.EDIT} element={<Edit login={login}/>} />
+        <Route path={ROUTES.REVIEW} element={<Review login={login} />} />
+        <Route path={ROUTES.EDIT} element={<Edit login={login} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

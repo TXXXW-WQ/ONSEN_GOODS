@@ -4,17 +4,6 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 /**
  * ユーザーごとのマイページ
- * contribution_score
-created_at
-description_edit_count
-email
-id
-onsen_add_count
-password
-picture_count
-review_count
-role
-username
  */
 
 function Mypage() {
@@ -35,7 +24,6 @@ function Mypage() {
           return;
         }
 
-        // ここが重要：result.json()はPromiseを返すのでawaitが必要
         const data = await result.json();
         setUserInfo(data);
       } catch (e) {
