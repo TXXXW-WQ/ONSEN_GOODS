@@ -9,7 +9,9 @@ exports.getMypage = async(req, res) => {
   const userId = req.user.id
   try {
     const result = await db.query(`
-      SELECT * FROM users WHERE $1
+      SELECT 
+      username, email, role, review_count, picuture_count, description_count, onsen_add_count, contribution_score
+      FROM users WHERE $1
       `,[userId])
     if (result.rows.length == 0){
       return res.status(404).json({ message: 'ユーザーが見つかりませんでした。'})
