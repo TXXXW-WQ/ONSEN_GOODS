@@ -34,7 +34,7 @@ async function setup() {
         location VARCHAR(255) NOT NULL,
         location_changer_user_id INTEGER REFERENCES users(id),
         location_complaints INTEGER DEFAULT 0,
-        description TEXT dEFAULT '現在この温泉に対する説明はありません',
+        description TEXT DEFAULT '現在この温泉に対する説明はありません',
         description_changer_user_id INTEGER REFERENCES users(id),
         description_complaints INTEGER DEFAULT 0,
         image_url VARCHAR(255),
@@ -87,12 +87,11 @@ async function setup() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    
+
     // 初期データ挿入
     await pool.query(`
       INSERT INTO hot_springs (
-        name, location, description, image_url, rating,
-        cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo, created_at
+        name, location, description, cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo, created_at
       )
       VALUES
         (
@@ -128,7 +127,7 @@ async function setup() {
       INSERT INTO users (username, email, password, role, contribution_score)
       VALUES ($1, $2, $3, $4, $5)
       `,
-      ['test', 'test@gmail.com', hashedPassword, '温泉マイスター', 150]
+      ['管理者', 'test@gmail.com', hashedPassword, '温泉マイスター', 150]
     );
 
     console.log('PostgreSQLテーブル作成完了');
