@@ -67,7 +67,7 @@ function Mypage() {
           <span className="text-gray-800">{userInfo.email}</span>
         </div>
         <div className="flex justify-between items-center py-2 border-b last:border-b-0">
-          <span className="text-gray-600 font-medium">ロール:</span>
+          <span className="text-gray-600 font-medium">権限:</span>
           <span className="text-gray-800">{userInfo.role}</span>
         </div>
         <div className="flex justify-between items-center py-2 border-b last:border-b-0">

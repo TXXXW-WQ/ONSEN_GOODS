@@ -79,34 +79,13 @@ function App() {
             {login && (
               <div className="relative mr-4">
                 <button
-                  onClick={() => setMyPageOpen(!myPageOpen)}
+                  onClick={handleMypage}
                   className='w-8 h-8 rounded-full overflow-hidden border border-white hover:border-blue-300 transition duration-150 focus:outline-none focus:ring-1 focus:ring-blue-300'
                 >
                   <img src={icon1} alt="ユーザーアイコン" className="w-full h-full object-cover" />
                 </button>
-                {myPageOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-xl z-20">
-                    <Link
-                      to={ROUTES.MYPAGE}
-                      className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
-                      onClick={() => setMyPageOpen(false)}
-                    >
-                      マイページへ
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setMyPageOpen(false);
-                      }}
-                      className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-red-100"
-                    >
-                      ログアウト
-                    </button>
-                  </div>
-                )}
               </div>
             )}
-
             <div className="relative"> 
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
