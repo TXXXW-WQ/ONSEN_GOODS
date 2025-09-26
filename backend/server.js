@@ -23,8 +23,9 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 
-//データベース接続の初期化
-require('./db/database'); // database.js内のSQLiteデータベース接続、テーブル作成、初期データ挿入が実行される。
+//データベースへの接続と初期化
+require('./db/database');
+require('./db/setup-db')
 
 // APIルートの定義
 // '/api/onsen' から始まるすべてのリクエストは、onsenRoutes.jsで定義されたルーティングに渡される。
