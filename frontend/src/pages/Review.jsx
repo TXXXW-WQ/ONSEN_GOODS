@@ -23,7 +23,7 @@ function Review({ login }) {
   useEffect(() => {
     const fetchOnsenName = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/onsen/${id}`);
+        const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}`);
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
@@ -50,7 +50,7 @@ function Review({ login }) {
 
     
     try {
-      const response = await fetch(`http://localhost:3000/api/onsen/${id}/rating`, {
+      const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}/rating`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

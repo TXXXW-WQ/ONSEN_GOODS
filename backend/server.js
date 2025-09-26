@@ -12,7 +12,7 @@ const port = 3000;
 
 // CORSの設定
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'https://onsen-goods.vercel.app/',
   credentials: true
 };
 

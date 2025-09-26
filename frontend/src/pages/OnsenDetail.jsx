@@ -24,7 +24,7 @@ function OnsenDetail({ login }) {
   useEffect(() => {
     const fetchOnsenDetail = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/onsen/${id}`)
+        const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}`)
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
@@ -58,7 +58,7 @@ function OnsenDetail({ login }) {
     const fetchRatings = async () => {
       setRatingsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3000/api/onsen/${id}/rating`);
+        const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}/rating`);
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
@@ -90,7 +90,7 @@ function OnsenDetail({ login }) {
        * @param role - 必要な権限レベル
        */
       const role = 'middle'
-      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
+      const rolecheck = await fetch(`https://onsen-goods.onrender.com//api/onsen/rolecheck/${role}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ function OnsenDetail({ login }) {
         return
       }
       const role = 'low'
-      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
+      const rolecheck = await fetch(`https://onsen-goods.onrender.com//api/onsen/rolecheck/${role}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -146,7 +146,7 @@ function OnsenDetail({ login }) {
     }
     try {
       const role = 'middle';
-      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
+      const rolecheck = await fetch(`https://onsen-goods.onrender.com//api/onsen/rolecheck/${role}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

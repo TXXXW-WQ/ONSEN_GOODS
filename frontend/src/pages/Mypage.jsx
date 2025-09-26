@@ -14,7 +14,7 @@ function Mypage() {
   useEffect(() => {
     const getMypage = async () => {
       try {
-        const result = await fetch('http://localhost:3000/api/onsen/mypage', {
+        const result = await fetch('https://onsen-goods.onrender.com//api/onsen/mypage', {
           credentials: 'include',
         });
 

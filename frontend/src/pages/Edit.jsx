@@ -40,7 +40,7 @@ function Edit() {
   useEffect(() => {
     const fetchOnsenDetail = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/onsen/${id}`)
+        const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}`)
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
@@ -70,7 +70,7 @@ function Edit() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/onsen/${id}/facilities`, {
+      const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}/facilities`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
