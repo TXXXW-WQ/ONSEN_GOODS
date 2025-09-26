@@ -12,7 +12,13 @@ const port = 3000;
 
 // CORSの設定
 const corsOptions = {
-  origin: 'https://onsen-goods.vercel.app/',
+  origin: [
+    'onsen-goods.vercel.app',
+    'onsen-goods-git-main-txxxw-wqs-projects.vercel.app',
+    'onsen-goods-32vy3nmml-txxxw-wqs-projects.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type', 'Authorization'], 
   credentials: true
 };
 
