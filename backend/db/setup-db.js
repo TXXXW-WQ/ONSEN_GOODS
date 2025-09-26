@@ -135,7 +135,7 @@ async function setup() {
   } catch (error) {
     console.error('PostgreSQLテーブル作成エラー:', error);
   } finally {
-    pool.end(); // プールを閉じる
+    // pool.end(); // プールを閉じる
   }
 }
 
