@@ -18,7 +18,7 @@ function Home({ login }) {
     // コンポーネントがマウントされたとき、APIからデータ取得
     const fetchOnsenList = async () => {
       try {
-        const response = await fetch('https://onsen-goods.onrender.com//api/onsen');
+        const response = await fetch('https://onsen-goods.onrender.com/api/onsen');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -52,7 +52,7 @@ function Home({ login }) {
        * @param role - 必要な権限レベル
        */
       const role = 'high'
-      const rolecheck = await fetch(`https://onsen-goods.onrender.com//api/onsen/rolecheck/${role}`, {
+      const rolecheck = await fetch(`https://onsen-goods.onrender.com/api/onsen/rolecheck/${role}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

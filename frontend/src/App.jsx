@@ -36,7 +36,7 @@ function App() {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const result = await fetch('https://onsen-goods.onrender.com//api/onsen/me', {
+        const result = await fetch('https://onsen-goods.onrender.com/api/onsen/me', {
           credentials: 'include'
         })
         if (result.ok) {
@@ -57,7 +57,7 @@ function App() {
     navigate(ROUTES.MYPAGE)
   }
   const handleLogout = async () => {
-    const result = await fetch('https://onsen-goods.onrender.com//api/onsen/logout', {
+    const result = await fetch('https://onsen-goods.onrender.com/api/onsen/logout', {
       method: 'POST',
       credentials: 'include'
     })

@@ -48,7 +48,7 @@ function AddOnsen({ login }) {
     setSuccess(false);
     try {
       
-      const response = await fetch('https://onsen-goods.onrender.com//api/onsen/add', {
+      const response = await fetch('https://onsen-goods.onrender.com/api/onsen/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

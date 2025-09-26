@@ -13,7 +13,7 @@ function Editdescription({ id, currentdescription, ModalClose }) {
     setSuccess(false);
 
     try {
-      const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}/editdescription`, {
+      const response = await fetch(`https://onsen-goods.onrender.com/api/onsen/${id}/editdescription`, {
         method: 'PUT',
         headers: {
           'Content-Type':

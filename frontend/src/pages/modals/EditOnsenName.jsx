@@ -13,7 +13,7 @@ function EditOnsenName({ onsenName, id, ModalClose }) {
     setSuccess(false);
 
     try {
-      const response = await fetch(`https://onsen-goods.onrender.com//api/onsen/${id}/nameedit`, {
+      const response = await fetch(`https://onsen-goods.onrender.com/api/onsen/${id}/nameedit`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

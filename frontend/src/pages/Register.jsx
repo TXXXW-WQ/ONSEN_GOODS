@@ -13,7 +13,7 @@ function Register() {
     e.preventDefault()
     setError(null)
     try {
-      const res = await fetch('https://onsen-goods.onrender.com//api/onsen/register', {
+      const res = await fetch('https://onsen-goods.onrender.com/api/onsen/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

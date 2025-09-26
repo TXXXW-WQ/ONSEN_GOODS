@@ -14,7 +14,7 @@ function Login({ login, setLogin }) {
     e.preventDefault()
     setError(null)
     try {
-      const res = await fetch('https://onsen-goods.onrender.com//api/onsen/login', {
+      const res = await fetch('https://onsen-goods.onrender.com/api/onsen/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
