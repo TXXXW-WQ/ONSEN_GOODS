@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '../const'
 import EditOnsenName from './modals/EditOnsenName';
 import Editdescription from './modals/EditDiscription';
+import EditLocate from './modals/EditLocate';
 
 function OnsenDetail({ login }) {
   const { id } = useParams();
@@ -15,6 +16,7 @@ function OnsenDetail({ login }) {
   const [reviewAuthError, setReviewAuthError] = useState(null);
   const [isEditdescriptionOpen, setIsEditdescriptionOpen] = useState(false);
   const [authEditdescriptionE, setAuthEditdescriptionE] = useState(null);
+  const [authEditLcateE, setAuthEditLcateE] = useState(null)
   const navigate = useNavigate();
 
   // 評価一覧のstate
@@ -108,6 +110,12 @@ function OnsenDetail({ login }) {
     }
   }
 
+  const handleEditLocate = async() => {
+    try{
+      if (!login){
+      }
+    }
+  }
   // モーダルを閉じるためのコールバック関数
   const ModalClose = () => {
     setIsEditNameOpen(false);
@@ -222,6 +230,12 @@ function OnsenDetail({ login }) {
       )}
       <div className="space-y-4 text-gray-800 text-lg">
         <p><strong className="font-semibold text-gray-700">場所:</strong> {onsen.location}</p>
+        <button onClick={}>編集</button>
+        <EditLocate
+          id={id}
+          currentLocate={onsen.location}
+          ModalClose={ModalClose}
+        />
         <p><strong className="font-semibold text-gray-700">評価:</strong> {onsen.rating ? onsen.rating.toFixed(2) : 0.00} / 5.00</p>
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
