@@ -8,6 +8,7 @@ const middleRole = require('../controllers/roleCheck/middleRole');
 const lowRole = require('../controllers/roleCheck/lowRole');
 const addOnsenName = require('../controllers/addOnsenName');
 const editdescription = require('../controllers/editDiscription')
+const editLocate = require('../controllers/editLocation')
 const getMypage = require('../controllers/getMypage')
 const authenticateJWT = require('../middleware/auth'); // JWT認証ミドルウェアを読み込む
 
@@ -57,4 +58,5 @@ router.put('/:id/nameedit', authenticateJWT, editOnsenName.editOnsenName);
 // 温泉の説明を編集する
 router.put('/:id/editdescription', authenticateJWT, editdescription.editdescription)
 
+router.put('/:id/editlocation', authenticateJWT, editLocate.editLocation)
 module.exports = router;
