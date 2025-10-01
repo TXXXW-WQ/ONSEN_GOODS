@@ -9,6 +9,7 @@ import { ROUTES } from './const'
 import Edit from './pages/Edit'
 import AddOnsen from './pages/AddOnsen'
 import Mypage from './pages/Mypage'
+import FAQ from './pages/FAQ'
 
 import icon1 from './assets/kkrn_icon_user_1.svg'
 import icon2 from './assets/kkrn_icon_user_2.svg'
@@ -76,6 +77,9 @@ function App() {
             </Link>
           </li>
           <li className="ml-auto relative flex items-center">
+            <div>
+              <Link to={ROUTES.FAQ}>?</Link>
+            </div>
             {login && (
               <div className="relative mr-4">
                 <button
