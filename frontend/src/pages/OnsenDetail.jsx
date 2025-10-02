@@ -92,8 +92,8 @@ function OnsenDetail({ login }) {
       /**
        * @param role - 必要な権限レベル
        */
-      const role = 'middle'
-      const rolecheck = await fetch(`https://onsen-goods.onrender.com/api/onsen/rolecheck/${role}`, {
+      const role = 'high'
+      const rolecheck = await fetch(`http://localhost:3000/api/onsen/rolecheck/${role}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

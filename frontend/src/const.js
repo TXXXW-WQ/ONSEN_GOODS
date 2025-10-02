@@ -11,4 +11,5 @@ export const ROUTES = {
   REVIEW: "/onsen/:id/review",
   EDIT: "/onsen/:id/edit",
   AddOnsen: "/add-onsen",
+  FAQ: "/faq",
 }

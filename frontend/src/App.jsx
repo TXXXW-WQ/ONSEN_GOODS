@@ -9,6 +9,7 @@ import { ROUTES } from './const'
 import Edit from './pages/Edit'
 import AddOnsen from './pages/AddOnsen'
 import Mypage from './pages/Mypage'
+import FAQ from './pages/FAQ'
 
 import icon1 from './assets/kkrn_icon_user_1.svg'
 import icon2 from './assets/kkrn_icon_user_2.svg'
@@ -68,58 +69,104 @@ function App() {
 
   return (
     <div className='p-6 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-8'>
-      <nav className='bg-blue-800 p-4 shadow-lg relative'>
-        <ul className='justify-center items-center list-none p-0 m-0 flex'>
-          <li>
-            <Link to={ROUTES.HOME} className='text-white text-4xl font-extrabold tracking-wide hover:text-blue-200 transition-colors duration-300'>
-              ONSEN GOODS
+      <nav className='bg-blue-700 p-4 shadow-xl relative rounded-t-lg'>
+        <div className='flex justify-between items-center'>
+          {/* サイトタイトル */}
+          <Link 
+            to={ROUTES.HOME} 
+            className='text-white text-3xl md:text-4xl font-extrabold tracking-wider hover:text-blue-200 transition-colors duration-300'
+          >
+            ONSEN GOODS
+          </Link>
+
+          {/* 右側の要素: FAQ, ユーザーアイコン, メニュー */}
+          <div className="flex items-center space-x-4">
+            {/* FAQボタン */}
+            <Link 
+              to={ROUTES.FAQ} 
+              className='text-white text-xl font-bold p-2 hover:bg-blue-600 rounded-full transition-colors duration-200'
+              aria-label="よくある質問"
+            >
+              <span className='sr-only'>FAQ</span>?
             </Link>
-          </li>
-          <li className="ml-auto relative flex items-center">
+
+            {/* ログイン中のマイページアイコン */}
             {login && (
-              <div className="relative mr-4">
+              <div className="relative">
                 <button
                   onClick={handleMypage}
-                  className='w-8 h-8 rounded-full overflow-hidden border border-white hover:border-blue-300 transition duration-150 focus:outline-none focus:ring-1 focus:ring-blue-300'
+                  className='w-10 h-10 rounded-full overflow-hidden border-2 border-white hover:border-blue-300 transition duration-150 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-blue-700'
+                  aria-label="マイページへ"
                 >
+                  {/* imgタグの代わりに、font-awesomeなどのアイコンフォントを使うか、
+                      実際のアイコン画像を設定してください */}
                   <img src={icon1} alt="ユーザーアイコン" className="w-full h-full object-cover" />
                 </button>
               </div>
             )}
+
+            {/* ドロップダウンメニューボタン */}
             <div className="relative"> 
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-600 focus:outline-none"
+                className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-700"
+                aria-expanded={menuOpen}
+                aria-controls="main-menu"
               >
-                メニュー ▼
+                メニュー <span className="ml-1">▼</span>
               </button>
 
+              {/* ドロップダウンメニュー本体 */}
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                <div 
+                  id="main-menu"
+                  className="absolute right-0 mt-3 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 origin-top-right transform scale-100 transition duration-100 ease-out"
+                  role="menu" 
+                  aria-orientation="vertical"
+                >
+                  {/* ホーム */}
                   <Link
                     to={ROUTES.HOME}
-                    className="block px-4 py-2 text-gray-800 hover:bg-blue-100"
+                    className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition duration-150 rounded-t-lg"
                     onClick={() => setMenuOpen(false)}
+                    role="menuitem"
                   >
                     ホーム
                   </Link>
+
+                  {/* 未ログイン時のオプション */}
                   {!login && (
                     <>
-                      <Link to={ROUTES.LOGIN} className="block px-4 py-2 text-gray-800 hover:bg-blue-100" onClick={() => setMenuOpen(false)}>
+                      {/* ログイン */}
+                      <Link 
+                        to={ROUTES.LOGIN} 
+                        className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition duration-150" 
+                        onClick={() => setMenuOpen(false)}
+                        role="menuitem"
+                      >
                         ログイン
                       </Link>
-                      <Link to={ROUTES.REGISTER} className="block px-4 py-2 text-gray-800 hover:bg-blue-100" onClick={() => setMenuOpen(false)}>
+                      {/* アカウント登録 */}
+                      <Link 
+                        to={ROUTES.REGISTER} 
+                        className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition duration-150" 
+                        onClick={() => setMenuOpen(false)}
+                        role="menuitem"
+                      >
                         アカウント登録
                       </Link>
                     </>
                   )}
+
+                  {/* ログイン時のオプション */}
                   {login && (
                     <button
                       onClick={() => {
                         handleLogout();
                         setMenuOpen(false);
                       }}
-                      className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-100"
+                      className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition duration-150 rounded-b-lg"
+                      role="menuitem"
                     >
                       ログアウト
                     </button>
@@ -127,8 +174,8 @@ function App() {
                 </div>
               )}
             </div>
-          </li>
-        </ul>
+          </div>
+        </div>
       </nav>
 
       {/* ルートを定義 */}
@@ -141,6 +188,7 @@ function App() {
         <Route path={ROUTES.AddOnsen} element={<AddOnsen login={login} />} />
         <Route path={ROUTES.REVIEW} element={<Review login={login} />} />
         <Route path={ROUTES.EDIT} element={<Edit login={login} />} />
+        <Route path={ROUTES.FAQ} element={<FAQ />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
