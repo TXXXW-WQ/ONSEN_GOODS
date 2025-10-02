@@ -91,7 +91,7 @@ async function setup() {
     // 初期データ挿入
     await pool.query(`
       INSERT INTO hot_springs (
-        name, location, description, cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo, created_at
+        name, location, description, image_url, rating, cold_bath, sauna, rotenburo, outdoor, bubble_bath, jet_bath, shampoo, created_at
       )
       VALUES
         (
@@ -127,7 +127,7 @@ async function setup() {
       INSERT INTO users (username, email, password, role, contribution_score)
       VALUES ($1, $2, $3, $4, $5)
       `,
-      ['管理者', 'test@gmail.com', hashedPassword, '温泉マイスター', 150]
+      ['テストユーザー', 'test@gmail.com', hashedPassword, '温泉マイスター', 150]
     );
 
     console.log('PostgreSQLテーブル作成完了');
